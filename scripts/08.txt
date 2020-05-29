@@ -1,0 +1,324 @@
+** 8-07, P-376
+//src/setupProxy.js 파일을 다음과 같이 작성한다.
+const proxy = require('http-proxy-middleware');
+module.exports = function(app) {
+    app.use(
+      proxy('/api', {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        pathRewrite: {
+            '^/api':''
+        }
+      })
+    );
+};
+
+
+
+** 8-15, P-386
+yarn add axios react-loader-spinner
+
+//src/setupProxy.js
+const proxy = require('http-proxy-middleware');
+
+module.exports = function(app) {
+    app.use(
+      proxy('/api', {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        pathRewrite: {
+            '^/api':''
+        }
+      })
+    );
+};
+
+
+
+
+** 8-17, P-388
+
+import React, { useState, useEffect } from 'react';
+import App from './App';
+import produce from 'immer';
+import axios from 'axios';
+
+const USER = "gdhong";
+const BASEURI = "/api/todolist/" + USER;
+
+const AppContainer = () => {
+    let [todolist, setTodoList] = useState([]);
+    useEffect(() => {
+        fetchTodoList();
+    }, []);
+    const fetchTodoList = () => {
+        setTodoList([]);
+        axios.get(BASEURI)
+        .then((response)=> {
+            setTodoList(response.data);
+        })
+    }
+    
+    const addTodo = (todo, desc, callback) => {
+        axios.post(BASEURI, { todo, desc })
+        .then((response)=> {
+            if (response.data.status === "success") {
+                let newTodolist = produce(todolist, (draft)=> {
+                    draft.push(
+                        { ...response.data.item, done:false })
+                })
+                setTodoList(newTodolist);
+                callback();
+            } else {
+                alert("연락처 추가 실패 : " + 
+                    response.data.message);
+            }
+        })
+        .catch((error)=> {
+            alert("연락처 추가 실패 : " + error);
+        })
+    }
+
+    const deleteTodo = (id) => { 
+        axios.delete(`${BASEURI}/${id}`)
+        .then((response)=>{
+            if (response.data.status === "success") {
+                let index = todolist.findIndex(
+                    (todo)=> todo.id === id);
+                let newTodolist = produce(todolist, (draft)=> {
+                    draft.splice(index,1);
+                })
+                setTodoList(newTodolist);
+            } else {
+                alert("연락처 삭제 실패 : " + 
+                    response.data.message);
+            }
+        })
+        .catch((error)=>{
+            alert("연락처 삭제 실패 : " + error);
+        })
+    }
+
+    const toggleDone = (id) => { 
+        let todoitem = todolist.find((todo)=> todo.id === id);
+        axios.put(`${BASEURI}/${id}`, 
+            { ...todoitem, done:!todoitem.done })
+        .then((response)=>{
+            if (response.data.status === "success") {
+                let index = todolist.findIndex(
+                    (todo)=> todo.id === id);
+                let newTodolist = produce(todolist, (draft)=> {
+                    draft[index].done = !draft[index].done;
+                })
+                setTodoList(newTodolist);
+            } else {
+                alert("연락처 수정 실패 : " + 
+                    response.data.message);
+            }
+        })
+        .catch((error)=>{
+            alert("연락처 수정 실패 : " + error);
+        })
+    }
+
+    const updateTodo = (id, todo, desc, done, callback) => {
+        axios.put(`${BASEURI}/${id}`, { todo, desc, done })
+        .then((response)=>{
+            if (response.data.status === "success") {
+                let index = todolist.findIndex(
+                    (todo)=> todo.id === id);
+                let newTodolist = produce(todolist, (draft)=> {
+                    draft[index] = 
+                        { ...draft[index], todo, desc, done }
+                })
+                setTodoList(newTodolist);
+                callback();
+            } else {
+                alert("연락처 수정 실패 : " + 
+                    response.data.message);
+            }
+        })
+        .catch((error)=>{
+            alert("연락처 수정 실패 : " + error);
+        })
+    }
+
+    const getTodoOne = (id) => todolist.find((todo)=>todo.id === parseInt(id,10));
+    const callbacks = { addTodo, deleteTodo, updateTodo, toggleDone, getTodoOne, fetchTodoList };
+    const states = { todolist };
+    return (
+        <App callbacks={callbacks} states={states} />
+    );
+};
+
+export default AppContainer;
+
+
+
+
+
+** 8-21, P-392
+
+......
+const AddTodo = props => {
+    ......
+    const addContactHandler = ()=> {
+        if (todo.trim() === "" || desc.trim()==="") {
+            alert('반드시 할일, 설명을 입력해야 합니다.');
+            return;
+        } 
+        props.callbacks.addTodo(todo, desc, ()=> {
+            props.history.push('/todos'); 
+        });
+    }
+    ......
+};
+
+
+
+......
+const EditTodo = props => {
+    ......
+    const updateContactHandler = ()=> {
+        if (todoOne.todo.trim() === "" || 
+           todoOne.desc.trim()==="") {
+            alert('반드시 할일, 설명을 입력해야 합니다.');
+            return;
+        }
+        let { id, todo, desc, done } = todoOne;
+        props.callbacks.updateTodo(id, todo, desc, done, ()=> {
+            history.push('/todos');
+        });
+    }
+    ......
+};
+
+
+
+
+
+** 8-23, P-394
+
+import React from 'react';
+import Loader from "react-loader-spinner";
+
+const Loading = () => {
+    return (
+        <div className="bg-white w-100 h-100 position-fixed" style={{ top:0, left:0, opacity:0.9 }}>
+            <div className="row w-100 h-100 justify-content-center align-items-center">
+                <div className="col-6 text-center">
+                    <h3>처리중</h3>
+                    <Loader type="Bars" color="gray" height={40} width={40} />
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default Loading;
+
+
+
+** 8-24, P-395
+
+......
+const BASEURI = "/api/todolist_long/" + USER;
+
+const AppContainer = () => {
+    let [todolist, setTodoList] = useState([]);
+    let [isLoading, setIsLoading] = useState(false);
+    ......
+    const fetchTodoList = () => {
+        setTodoList([]);
+        setIsLoading(true);
+        axios.get(BASEURI)
+        .then((response)=> {
+            setTodoList(response.data);
+            setIsLoading(false);
+        })
+    }
+
+    const addTodo = (todo, desc, callback) => {
+        setIsLoading(true);
+        axios.post(BASEURI, { todo, desc })
+        .then((response)=> {
+            if (response.data.status === "success") {
+                let newTodolist = produce(todolist, (draft)=> {
+                    draft.push({ ...response.data.item, done:false })
+                })
+                setTodoList(newTodolist);
+                callback();
+            } else {
+                alert("연락처 추가 실패 : " + response.data.message);
+            }
+            setIsLoading(false);
+        })
+        .catch((error)=> {
+            setIsLoading(false);
+            alert("연락처 추가 실패 : " + error);
+        })
+    }
+  
+    const callbacks = { addTodo, deleteTodo, updateTodo, toggleDone, getTodoOne, fetchTodoList };
+    const states = { todolist, isLoading };
+
+    return (
+        <App callbacks={callbacks} states={states} />
+    );
+};
+
+export default AppContainer;
+
+
+
+** 8-25, P-396
+
+import React from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import PropTypes from 'prop-types';
+.....
+import Loading from './components/Loading';
+
+const App = (props) => {
+  return (
+    <Router>
+      <div className="container">
+        <Header />
+        <Switch>
+             ......
+        </Switch>
+      </div>
+      { props.states.isLoading ? <Loading /> : "" }
+    </Router>
+  );
+};
+......
+
+
+
+** 8-26, P-397
+
+......
+
+const TodoList = (props) => {
+    ......
+    return (
+        <>
+        <div className="row">
+            <div className="col p-3">
+                <Link className="btn btn-primary mr-1" to="/todos/add">연락처 추가</Link>
+                <button className="btn btn-primary mr-1" 
+                     onClick={ ()=>props.callbacks.fetchTodoList() }>연락처 새로고침</button>
+            </div>
+        </div>
+        <div className="row">
+            ......
+        </div>
+        </>
+    );
+};
+......
+
+
+
+

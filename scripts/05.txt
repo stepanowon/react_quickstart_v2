@@ -1,0 +1,345 @@
+** 5-03, P-202
+//getDerivedStateFromProps 메서드 예
+
+static getDerivedStateFromProps(nextProps, prevState){
+   if(nextProps.someValue!==prevState.someValue){
+     return { someState: nextProps.someValue};
+  }
+  else return null;
+}
+
+** 5-13, P-213
+
+console.log("### ListItem 컴포넌트 렌더")
+
+console.log("### List 컴포넌트 렌더")
+
+console.log("### MyButton 컴포넌트 렌더")
+
+
+ReactDOM.render(<App />, document.getElementById('root'));
+
+
+
+** 5-15, P-215
+
+class ListItem extends Component {
+    shouldComponentUpdate(nextProps, nextState) {
+        return this.props.item !== nextProps.item;
+    }
+    render() { ..... }
+}
+
+class MyButton extends Component {
+    shouldComponentUpdate(nextProps, nextState) {
+        return false;
+    }   
+    render() {
+        ......
+    }
+}
+
+
+
+** 5-18, P-219
+
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
+
+class ListItem extends PureComponent {
+    
+   //shouldComponentUpdate 메서드는 삭제
+   
+    render() {
+        console.log("### ListItem 컴포넌트 렌더")
+        return (
+            <li className="list-group-item list-group-item-success">
+                {this.props.no} : {this.props.item}
+            </li>
+        )
+    }
+}
+......
+
+
+
+** 5-19, P-220
+
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
+
+class MyButton extends PureComponent {
+   ......
+}
+......
+
+
+......
+class App extends Component {
+    constructor(props) {
+        ......
+        this.addItem = this.addItem.bind(this);
+    }
+    ......
+    render() {
+        return (
+            ......
+            <MyButton addItem={this.addItem} />
+            ......
+        );
+    }
+}
+......
+
+
+
+** 5-22, P-224
+yarn add microseconds
+
+
+
+** 5-23, P-225
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import ms from 'microseconds';
+
+let Logger = (LoggingComponent) => {
+    class Logger extends Component {
+        constructor(props) {
+            super(props);
+            if (this.props.isLog) {
+                this.start = ms.now();
+            }  
+        }
+        componentDidMount() {
+            if (this.props.isLog) {
+                let ts = ms.now() - this.start;
+                console.log(`### ${LoggingComponent.name} 마운트 : ${ts} micro seconds `);
+            }
+        }
+        shouldComponentUpdate(nextProps, nextState) {
+            if (nextProps.isLog) {
+                this.start = ms.now();
+            }  
+            return true;
+        }
+        componentDidUpdate(prevProps, prevState) {
+            if (this.props.isLog) {
+                let ts = ms.now() - this.start;
+                console.log(`### ${LoggingComponent.name} 업데이트 : ${ts} micro seconds `);
+            }
+        } 
+        render() {
+            return <LoggingComponent {...this.props} />
+        }
+    }
+
+    Logger.propTypes = {
+        isLog : PropTypes.bool
+    };    
+    Logger.defaultProps = {
+        isLog : false
+    };
+    return Logger;
+};
+
+export default Logger;
+
+
+
+** 5-25, P-227
+......
+import Logger from './Logger';
+
+class ListItem extends Component {
+   ......
+}
+......
+export default Logger(ListItem);
+
+
+
+
+......
+import Logger from './Logger';
+
+class List extends Component {
+    render() {
+        let items = this.props.itemlist.map((item) => {
+            return (<ListItem  isLog={process.env.NODE_ENV === "development"} key={item.no} item={item} />)
+        });
+        ......
+    }
+}
+......
+export default Logger(List);
+
+
+
+** 5-26, P-228
+......
+class App extends Component {
+    ......
+    render() {
+        return (
+            <div className="container">
+                <div className="card card-body">
+                    <MyButton addItem={this.addItem} />
+                     <List itemlist={this.state.itemlist} isLog={process.env.NODE_ENV==="development"} />
+                </div>
+            </div>
+        );
+    }
+}
+
+export default App;
+
+
+
+** 5-31, P-235
+
+yarn add  -D react-perf-devtool 
+npm install --save-dev react-perf-devtool
+
+
+......
+import { registerObserver } from 'react-perf-devtool'
+
+registerObserver();
+ReactDOM.render(<App />, document.getElementById('root'));
+registerServiceWorker();
+
+
+
+
+** 5-32, P-236
+
+import React, { Component } from 'react';
+import List from './List';
+import produce from 'immer';
+
+class App extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {   items : [ ]     };
+        this.no = 0;
+    }
+    componentDidMount() {
+        this.handleId = setInterval(()=>this.addItem(), 50)
+    }
+    componentWillUnmount() {
+        clearInterval(this.handleId);
+    }
+    addItem() {
+        this.no++;
+        let newItems = produce(this.state.items, (draft)=>{
+            draft.push({ no:this.no, name:'아이템 '+this.no })
+        })
+        this.setState({ items : newItems })
+        if (this.no % 200 === 0) {
+            this.setState({ items : [] })
+        }
+    }
+
+    render() {
+        let styles = { border:"solid 1px gray", 
+             float:"left", width:"33%" };
+        return (
+            <div>
+                <div style={styles}>
+                    <h2>#1</h2>
+                    <List items={this.state.items} />
+                </div>
+                <div style={styles}>
+                    <h2>#2</h2>
+                    <List items={this.state.items} />
+                </div>
+                <div style={styles}>
+                    <h2>#3</h2>
+                    <List items={this.state.items} />
+                </div>
+            </div>
+        );
+    }
+}
+
+export default App;
+
+
+
+** 5-33, P-237
+
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import ListItem from './ListItem';
+
+class List extends Component {
+    render() {
+        let listitems = this.props.items.map((item)=>{
+            return (
+                <ListItem key={item.no} no={item.no} name={item.name } />
+            )
+        })
+
+        return (
+            <div>
+                <ul>{listitems}</ul>
+            </div>
+        );
+    }
+}
+
+List.propTypes = {
+    items : PropTypes.arrayOf(Object)
+};
+
+export default List;
+
+
+
+** 5-34, P-238
+
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
+class ListItem extends Component {   
+    render() {
+        return (
+            <li>{this.props.no} : {this.props.name}</li>
+        );
+    }
+}
+ListItem.propTypes = {
+    no : PropTypes.number.isRequired,
+    name : PropTypes.string.isRequired
+};
+export default ListItem;
+
+
+......(생략)
+import { registerObserver }  from 'react-perf-devtool'
+
+registerObserver();
+ReactDOM.render(<App />, document.getElementById('root'));
+registerServiceWorker();
+
+
+
+** 5-36, P-240
+
+......
+class ListItem extends Component {
+    shouldComponentUpdate(nextProps, nextState) {
+        return this.props.no !== nextProps.no || this.props.name !== nextProps.name;
+    }
+    ......
+}
+......
+
+
+
+
+
+
+
+

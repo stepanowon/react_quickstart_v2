@@ -1,0 +1,487 @@
+** 2-12, P-42
+npm install --save-dev babel-cli  babel-core  babel-preset-env babel-preset-stage-2
+
+
+** 2-13, P-43
+{
+    "presets" : [ "env", "stage-2" ]    
+}
+
+let name = "world";
+console.log(`hello ${name}!!`);
+
+
+
+** 2-14, P-44
+npm install babel-plugin-source-map-support --save-dev
+npx babel  src  –d  build  --source-maps
+
+** 2-15, P-45
+
+let name = "world";
+console.log(`hello ${name}!!`);
+
+
+** 2-17, P-47
+<html>
+    <head>
+        <title>test!!</title>
+        <script type="text/javascript" src="build/sample.js"></script>
+    </head>
+    <body>
+    </body>
+</html>
+
+
+** 2-20, P-51
+let msg= "GLOBAL";
+function outer(a) {
+    let msg = "OUTER";
+    console.log(msg);
+    if (true) {
+        let msg = "BLOCK";
+        console.log(msg);
+    }
+}
+
+
+** 2-21, P-52
+//에러 안남
+console.log(A1);	
+var A1 = "hello";
+
+
+var msg = "hello";
+function test() {
+    console.log(msg);
+    if (false) {
+        var msg = "world";
+    }
+    console.log(msg);
+}
+test();
+
+
+** 2-22, P-53
+function addContact(name, mobile, 
+                       home="없음", 
+                       address="없음", 
+                       email="없음") {
+    var str = `name=${name}, mobile=${mobile}, home=${home}, 
+               address=${address}, email=${email}`;
+    console.log(str);
+}
+
+addContact("홍길동", "010-222-3331")
+addContact("이몽룡", "010-222-3331", "02-3422-9900", "서울시");
+
+
+** 2-23, P-54
+function foodReport(name, age, ...favoriteFoods) {
+    console.log(name + ", " + age);
+    console.log(favoriteFoods);
+}
+
+foodReport("이몽룡", 20, "짜장면", "냉면", "불고기");
+foodReport("홍길동", 16, "초밥");
+
+
+** 2-24, P-55
+let arr = [10,20,30,40];
+let [a,b,c] = arr;
+console.log(a, b, c);
+
+let p1 = {name:"홍길동", age:20, gender:"M"};
+let { name:n, age:a, gender } = p1;
+console.log(n,a,gender);
+
+
+** 2-25, P-56
+function addContact({name, phone, email="이메일 없음", age=0}) {
+    console.log("이름 : " + name);
+    console.log("전번 : " + phone);
+    console.log("이메일 : " + email);
+    console.log("나이 : " + age);
+}
+
+addContact({
+    name : "이몽룡", 
+    phone : "010-3434-8989"
+})
+
+
+** 2-26, P-57
+var test1 = function(a,b) {
+    return a+b;
+}
+
+var test2 = (a,b) => {
+    return a+b;
+}
+
+var test3 = (a,b) => a+b;
+
+
+** 2-27, P-58
+var obj = { result: 0 };
+obj.add = function(x,y) {  
+   this.result = x+y;
+}
+//아래 코드에서의 this는?     obj임
+obj.add(3,4)
+console.log(obj)
+
+
+var add2 = obj.add();
+//호출될 때 add2() 메서드를 보유한 객체가 없으므로 Global(전역)객체가 this가 됨.
+add2()
+
+
+
+
+** 2-28, P-59
+var add = function(x,y) {  
+   this.result = x+y;
+}
+var obj = {};
+//add 함수에 obj를 직접 this로 지정하여 호출함
+add.apply(obj, [4,5])
+//add.call(obj, 3,4)
+
+
+var add = function(x,y) {  
+   this.result = x+y;
+}
+var obj = {};
+//add 함수에 obj를 직접 this로 연결한 새로운 함수를 리턴함.
+var add2 = add.bind(obj);
+
+
+
+** 2-29, P-60
+var obj = { result:0 };
+obj.add = function(x,y) {
+  console.log(this);
+  function inner() {
+     this.result = x+y;
+  }
+  inner();
+}
+obj.add(4,5)
+
+
+** 2-30, P-61
+//문제해결1
+var obj = { result:0 };
+obj.add = function(x,y) {
+  function inner() {
+     this.result = x+y;
+  }
+  inner = inner.bind(this);
+  inner();
+}
+obj.add(4,5)
+
+//문제해결2
+var obj = { result:0 };
+obj.add = function(x,y) {
+  function inner() {
+     this.result = x+y;
+  }
+  inner.apply(this);
+}
+obj.add(4,5)
+
+
+//문제해결3
+var obj = { result:0 };
+obj.add = function(x,y) {
+  var inner = () => {
+     this.result = x+y;
+  }
+  inner()
+}
+obj.add(4,5)
+
+
+** 2-31, P-62
+var name = "홍길동";
+var age = 20;
+var email = "gdhong@test.com";
+var obj = { name, age, email };
+
+console.log(obj);
+
+
+** 2-32, P-63
+let p1 = {
+    name : "아이패드",
+    price : 200000,
+    quantity : 2,
+    order : function() {
+        if (!this.amount) {
+            this.amount = this.quantity * this.price;
+        }         
+        console.log("주문금액 : " + this.amount);
+    },
+    discount(rate) {
+        if (rate > 0 && rate < 0.8) {
+            this.amount = (1-rate) * this.price * this.quantity; 
+        }
+        console.log((100*rate) + "% 할인된 금액으로 구매합니다.");
+    }
+}
+p1.discount(0.2);
+p1.order();
+
+
+
+** 2-33, P-64
+var d1 = new Date();
+var name = "홍길동";
+var r1 = `${name} 님에게 ${d1.toDateString() }에 연락했다.`;
+
+
+var product = "갤럭시S7";
+var price = 199000;
+var str = `${name}의 가격은
+    ${price}원 입니다.`;
+console.log(str);
+
+
+
+** 2-34, P-65
+var getPercent = function(str, ...values) {
+      //str : [ '첫번째 값은 ', '이고, 두번째 값은 ', '이다.' ]
+      //values : [ 0.222, 0.78999 ] 
+}
+
+var v1 = 0.222;
+var v2 = 0.78999; 
+var r2 = getPercent`첫번째 값은 ${v1}이고, 두번째 값은 ${v2}이다.`;
+
+
+//응용한 코드는 다음과 같다.
+var getPercent = function(str, ...values) {
+    var result = "";
+    for (var i=0; i < str.length; i++) {
+        result += str[i];
+        if (values[i])
+            result += Math.round(values[i] * 100) + "%";
+    }
+    return result;
+}
+var v1 = 0.222;
+var v2 = 0.78999; 
+var r2 = getPercent`첫번째 값은 ${v1}이고, 두번째 값은 ${v2}이다.`;
+console.log(r2);
+
+
+
+** 2-35, P-66
+class Polygon {
+  constructor(height, width) {
+    this.height = height;
+    this.width = width;
+  }
+}
+
+
+
+** 2-36, P-67
+class Person {
+    constructor(name, tel, address) {
+        this.name = name;
+        this.tel = tel;
+        this.address = address;
+        if (Person.count) { Person.count++; } else { Person.count = 1; }    
+    }
+    static getPersonCount() { 
+        return Person.count; 
+    }
+    toString() {
+        return `name=${this.name}, tel=${this.tel}, address=${this.address}`;
+    }
+}
+var p1 = new Person('홍길동', '010-222-3331', '서울시');
+var p1 = new Person('이몽룡', '010-222-3332', '경기도');
+console.log(p1.toString());
+console.log(Person.getPersonCount());
+
+
+
+
+** 2-37, P-68
+
+class Person {
+    ……
+}
+
+class Employees extends Person {
+    constructor(name, tel, address, empno, dept) {
+        super(name,tel,address);
+        this.empno = empno;
+        this.dept = dept;
+    }
+    toString() {
+        return super.toString() + `, empno=${this.empno}, dept=${this.dept}`;
+    }
+    getEmpInfo() {
+        return `${this.empno} : ${this.name}은 ${this.dept} 부서입니다.`;
+    }
+}
+
+let e1 = new Employees("이몽룡", "010-222-2121", "서울시", "A12311", "회계팀");
+console.log(e1.getEmpInfo());
+console.log(e1.toString());
+console.log(Person.getPersonCount());
+
+
+
+** 2-40, P-71
+var p = new Promise(function(resolve, reject) {
+    setTimeout(function() {
+        var num = Math.round(Math.random()*20);
+        var isValid = num % 2;
+        if (isValid) { resolve(num); }
+        else { reject(num); }
+    }, 1000);
+});
+
+p.then(function(num) {
+    console.log("SUCCESS : " + num);
+}).catch(function(num) {
+    console.log("FAIL : " + num);
+});
+
+console.log("Hello!!");
+
+
+//기본 패턴
+var p = new Promise(function(resolve, reject) {
+    //--비동기로 처리할 작업 배치
+    if(isSuccess) { resolve('Success!');  }
+    else { reject('Failure!'); }
+});
+p.then(function() { 
+    //--resolve시에 처리할 코드
+}).catch(function() {
+    //--reject시에 처리할 코드
+})
+
+
+
+** 2-41, P-72
+var p = new Promise(
+    function(resolve, reject) {
+    setTimeout(function() {
+        var num = Math.round(Math.random()*20);
+        var isValid = num % 2;
+        if (isValid) { resolve(num); }
+        else { reject(num); }
+    }, 1000);
+});
+
+p.then(function(num) {
+    console.log("SUCCESS1 : " + num);
+    return num*2;
+}).then(function(num) {
+    console.log("SUCCESS2 : " + num);
+    return num*2;
+}).then(function(num) {
+    console.log("SUCCESS3 : " + num);
+})
+
+
+** 2-42, P-73
+var req1 = new Promise(function(resolve, reject) { 
+	setTimeout(function() { resolve('작업1'); }, 3000);
+});
+var req2 = new Promise(function(resolve, reject) { 
+	setTimeout(function() { resolve('작업2'); }, 1000);
+});
+
+Promise.all([req1, req2]).then(function(results) {
+	console.log('Then: ', results);
+}).catch(function(err) {
+	console.log('Catch: ', err);
+});
+
+
+
+** 2-43, P-74
+var req1 = new Promise(function(resolve, reject) {
+ 	setTimeout(function() { resolve('작업1'); }, 3000);});
+var req2 = new Promise(function(resolve, reject) {
+ 	setTimeout(function() { resolve('작업2'); },1000);});
+
+Promise.race([req1, req2]).then(function(results) {	
+	console.log('Resolve : ', results);
+}).catch(function(err) {	
+	console.log('Reject : ', err);
+});
+
+
+
+
+** 2-46, P-77
+function generateRandom() {
+    return Math.random();
+}
+function sum(a,b) {
+    return a+b;
+}
+export { generateRandom, sum }
+
+
+
+import { generateRandom, sum } from './utility';
+console.log(generateRandom());
+
+
+
+** 2-47, P-78
+var utils = {
+    generateRandom : function() {
+        return Math.random();
+    },
+    sum : function(a,b) {
+        return a+b;
+    }
+};
+export default utils;
+
+
+import utils from './utility';
+console.log(utils.generateRandom());
+console.log(utils.sum(2,3));
+
+
+
+** 2-48, P-79
+
+let arr = [10,20,30];
+let arr2 = [ ...arr ];
+console.log(arr2);
+let arr3 = [ "hello" ,...arr, "world"];
+console.log(arr3);
+let obj = { a:100, b:200 };
+let obj2 = { ...obj };
+console.log(obj === obj2); //false
+let obj3 = { ...obj, c:300, d:400 }; 
+console.log(obj3); //{a:100, b:200, c:300, d:400 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

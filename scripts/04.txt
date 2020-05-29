@@ -1,0 +1,887 @@
+** 4-04, P-127
+const styles = {
+    listItemStyle : {
+       fontStyle:"italic", textDecoration:"underline"
+    },
+    dashStyle: {
+       backgroundColor: "#fff",
+       borderTop: "2px dashed gray"
+    }
+}
+export default styles;
+
+
+** 4-05, P-128
+......
+import styles from './styles';
+......
+class App extends Component {
+    ......
+    render() {
+        return (
+            <div className="container">
+                <h1>Hello {this.state.msg}</h1>
+                <hr style={styles.dashStyle} />
+                { this.createString(4,5) }
+                <CountryList countries={this.state.list} />
+            </div>
+        );
+    }
+}
+......
+
+
+
+** 4-06, P-129
+
+import React, { Component } from 'react';
+import styles from './styles';
+
+class CountryItem extends Component {
+    render() {
+        return (
+            <li style={styles.listItemStyle}
+              className={this.props.visited ? 'list-group-item active' : 'list-group-item' }>
+                    {this.props.country}
+            </li>
+        );
+    }
+}
+
+export default CountryItem;
+
+
+** 4-08, P-131
+
+yarn add styled-components
+npm install --save-dev styled-components
+
+
+
+** 4-09, P-132
+import React, { Component } from 'react';
+import styled from 'styled-components'
+
+class Footer extends Component {
+    render() {
+        const FooterBox = styled.div`
+            position: absolute;
+            right: 0; bottom: 0;  left: 0;
+            padding: 1rem;
+            background-color: #cdcdcd;
+            text-align: center;
+        `;
+        return (
+            <FooterBox>React styled-component Test!!</FooterBox>
+        );
+    }
+}
+export default Footer;
+
+
+** 4-10, P-133
+......
+import Footer from './Footer';
+
+class App extends Component {
+......
+    render() {
+        return (
+            <div className="container">
+                ......
+                <Footer />
+            </div>
+        );
+    }
+}
+
+export default App;
+
+
+
+** 4-11, P-134
+
+......
+const FooterBox = styled.div`
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: 1rem;
+    background-color: ${ 
+        (props)=> { 
+            if (props.theme==="basic") return 'skyblue';
+            return '#cdcdcd';  
+        }
+    };
+    text-align: center;
+`;
+
+return (
+    <FooterBox theme="basic">React styled-component Test!!</FooterBox>
+);
+......
+
+
+** 4-15, P-139
+
+import React, { Component } from 'react';
+
+class Calc extends Component {
+    render() {
+        let result = 0;
+        switch(this.props.oper) {
+            case "+" :
+                result = parseFloat(this.props.x) + parseFloat(this.props.y)                break;
+            case "*" : 
+                result = parseFloat(this.props.x) * parseFloat(this.props.y);                break;
+            default :
+                result = 0;
+        }
+
+        return (
+            <div>
+                <h3>연산 방식 : { this.props.oper }</h3><hr />
+                <div>
+                    {this.props.x} {this.props.oper} {this.props.y} = {result}
+                 </div>
+            </div>
+        );
+    }
+}
+
+export default Calc;
+
+
+
+** 4-16, P-140
+
+......
+import Calc from './Calc';
+......
+
+let values = { x:4, y:5, oper:"+" };
+ReactDOM.render(
+  <React.StrictMode><Calc {...values} /></React.StrictMode>,
+  document.getElementById('root')
+);
+serviceWorker.unregister();
+
+
+
+let values = { x:"aaa", y:"bbb", oper:"/" };
+ReactDOM.render(
+  <React.StrictMode><Calc {...values} /></React.StrictMode>,
+  document.getElementById('root')
+);
+
+
+** 4-17, P-141
+
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
+class Calc extends Component { ...... }
+
+Calc.propTypes = {
+    x : PropTypes.number.isRequired,
+    y : PropTypes.number.isRequired,
+    oper : (props, propName, componentName) => {
+        if (props[propName] !== "+" || props[propName] !== "*") {
+            return new Error(propName + " 속성의 값은 반드시 '+', '*'만 허용합니다.");
+        }
+    }
+}
+export default Calc;
+
+
+
+
+** 4-19, P-143
+
+PropTypes.shape({ 
+    name: PropTypes.string.isRequired,
+    age: PropTypes.number
+})
+
+
+(props, propName, componentName) => {
+        if (props[propName] !== "+" && props[propName] !== "*") {
+            return new Error(`${propName} 속성의 값은 반드시 '+', '*'만 허용합니다.(${componentName} 컴포넌트)`);
+        }
+}
+
+
+** 4-20, P-144
+
+......
+class Calc extends Component { ...... }
+
+Calc.propTypes = {
+    x : PropTypes.number,
+    y : PropTypes.number,
+    oper : (props, propName, componentName) => { ...... }
+}
+
+Calc.defaultProps = {
+    x : 100,
+    y : 200,
+    oper : "+"
+}
+
+export default Calc;
+
+
+
+//PropTypes의 isRequired는 제거해야 함.
+//defaultProps로 기본값을 부여
+//src/index.js에서 속성 부여하던 것을 삭제함.
+
+ReactDOM.render(
+  <React.StrictMode>
+    <Calc />
+  </React.StrictMode>,
+  document.getElementById('root')
+);
+
+
+
+
+** 4-22, P-147
+
+import React, { Component } from 'react'
+
+class Hello extends Component {
+  helloClick() {
+     alert('Hello ' + this.props.name); 
+  }
+  render() {
+    return (
+      <button onClick={ this.helloClick.bind(this) }>OK</button>
+    )     
+  }
+}
+
+export default Hello
+
+
+//화살표 함수일 때는 아래쪽과 같이...
+  helloClick = () => {
+     alert('Hello ' + this.props.name); 
+  }
+  
+  render() {
+    return (
+      <button onClick={ this.helloClick }>OK</button>
+    )     
+  }
+
+
+** 4-24, P-149
+
+import React, { Component } from 'react';
+
+class App extends Component {
+  constructor() {
+    super()
+    this.state = { num : 0 }
+  }
+  add() {    
+    this.setState({ num : this.state.num+1 })    
+  }
+  subtract = ()=> {  
+    this.setState({ num : this.state.num-1 })    
+  }
+  render() {
+    return (
+      <div className="card card-body bg-gray-200 m-2">
+          <span className="input-group-btn">
+            <button type="button" className="btn btn-primary m-1" onClick={ this.subtract}>
+              -</button>
+            <button type="button" className="btn btn-primary m-1" onClick={this.add.bind(this)}>
+              +</button>
+            <input type="text" className="form-control input-number m-1" value={this.state.num} />
+          </span>
+      </div>
+    );
+  }
+}
+
+export default App;
+
+
+
+** 4-25, P-150
+
+import React from 'react';
+import ReactDOM from 'react-dom';
+import 'bootstrap/dist/css/bootstrap.css';
+import './index.css';
+import App from './App';
+import * as serviceWorker from './serviceWorker';
+
+ReactDOM.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+  document.getElementById('root')
+);
+
+serviceWorker.unregister();
+
+
+** 4-28, P-154
+
+import React, { Component } from 'react'
+
+class App extends Component {
+  constructor() {
+    super()
+    this.state = { x:0, y:0 };
+  }  
+  render() {
+    return (
+      <div>
+        X : <input type='text' value={this.state.x} /><br />
+        Y : <input type='text' value={this.state.y} /><br />
+        결과 : <span>{this.state.x + this.state.y}</span>
+      </div>
+    )
+  }
+}
+
+export default App;
+
+
+
+** 4-31, P-157
+class App extends Component {
+  constructor() {
+    super()
+    this.state = { x:0, y:0 };
+  }  
+  change = (e) => {
+    let newValue = parseInt(e.target.value);
+    if (isNaN(newValue)) newValue = 0; 
+    if (e.target.id === "x")
+      this.setState({ x: newValue })
+    else 
+      this.setState({ y: newValue })
+  }
+  render() {
+    return (
+      <div>
+        X : <input id="x" type='text' value={this.state.x} onChange={this.change}/><br />
+        Y : <input id="y" type='text' value={this.state.y} onChange={this.change}/><br />
+        결과 : <span>{this.state.x + this.state.y}</span>
+      </div>
+    )
+  }
+}
+
+export default App;
+
+
+
+** 4-33, P-159
+import React, { Component } from 'react';
+
+class App extends Component {
+    constructor() {
+        super()
+        this.state = { x:0, y:0, result:0 };
+    }
+   
+    add() {
+        let x = parseInt(this.elemX.value);
+        let y = parseInt(this.elemY.value);
+        if (isNaN(x)) x = 0;
+        if (isNaN(y)) y = 0;
+        this.setState({ x:x, y:y, result:x+y });
+    }
+
+    render() {
+        return (
+            <div className="container">
+                X : <input id="x" type="text" 
+                        defaultValue={this.state.x}
+                        ref={(input) => { this.elemX = input; }} /><br />
+                Y : <input id="y" type="text" 
+                        defaultValue={this.state.y}
+                        ref={(input) => { this.elemY = input; }} /><br />
+                <button onClick={this.add.bind(this)}>
+                    덧셈 계산</button><br/>
+                결과 : <span>{this.state.result}</span>
+            </div>
+        )
+    }
+}
+
+export default App;
+
+
+
+//index.js에서 변경
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './index.css';
+//import App from './App';
+import App from './App2';
+
+
+
+
+** 4-38, P-165
+let quiz = {
+    "students" : ["홍길동", "성춘향", "박문수", "변학도" ],
+    "description" : "기본상식을 물어보는 테스트",
+    "quizlist": [
+      {
+        "question": "한국 프로야구 팀이 아닌것은?",
+        "options": [
+            { "no":1, "option":"삼성라이온스" },
+            { "no":2, "option":"기아타이거스" },
+            { "no":3, "option":"두산베어스" },
+            { "no":4, "option":"LA다져스" }
+        ],
+        "answer": 4
+      },
+      {
+        "question": "2018년 크리스마스는 무슨 요일인가?",
+        "options": [
+            { "no":1, "option":"월" },
+            { "no":2, "option":"화" },
+            { "no":3, "option":"수" },
+            { "no":4, "option":"목" }
+        ],
+        "answer": 2
+      }
+    ]
+}
+
+
+
+** 4-39, P-166
+
+let quiz = { ...(생략) }
+
+let quiz2 = quiz;
+quiz2.quizlist[0].options[0].option = "LG트윈스";
+
+//true, true, true, true, true
+console.log(quiz === quiz2)	
+console.log(quiz.quizlist === quiz2.quizlist)
+console.log(quiz.quizlist[0] === quiz2.quizlist[0])
+console.log(quiz.quizlist[0].options[0] === quiz2.quizlist[0].options[0])
+console.log(quiz.quizlist[0].options[0].option === quiz2.quizlist[0].options[0].option)
+
+
+
+** 4-40, P-167
+import produce from "immer"
+
+const currentState = [
+    {
+        todo: "Learn es6",
+        done: true
+    },
+    {
+        todo: "Try immer",
+        done: false
+    }
+]
+
+const nextState = produce(current, draft => {
+    draftState.push({todo: "Tweet about it"})
+    draftState[1].done = true
+})
+
+
+
+** 4-41, P-168
+......
+import produce from "immer";
+......
+let quiz = {  ......  };
+
+const quiz2 = produce(quiz, draft => {
+  draft.quizlist[0].options[0].option = "LG트윈스";
+});
+
+console.log(quiz.quizlist[0].options[0].option);
+
+//false, false, false, false, false, true 
+console.log(quiz === quiz2) 
+console.log(quiz.quizlist === quiz2.quizlist)
+console.log(quiz.quizlist[0] === quiz2.quizlist[0])
+console.log(quiz.quizlist[0].options[0] === quiz2.quizlist[0].options[0])
+console.log(quiz.quizlist[0].options[0].option === quiz2.quizlist[0].options[0].option)
+console.log(quiz.students === quiz2.students)
+
+
+
+** 4-48, P-177
+import React from 'react';
+import ReactDOM from 'react-dom';
+import 'bootstrap/dist/css/bootstrap.css';
+import App from './App';
+import * as serviceWorker from './serviceWorker';
+
+ReactDOM.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+  document.getElementById('root')
+);
+
+serviceWorker.unregister();
+
+
+** 4-49, P-178
+
+import React, { Component } from 'react';
+import produce from 'immer';
+import MyButton from './MyButton';
+import List from './List';
+
+class App extends Component {
+    constructor() {
+        super()
+        this.state = {  itemlist : [ ] }
+    }
+
+    addItem() {
+        if (!this.num) this.num = 0;
+        this.num++;
+        let newItemList = produce(this.state.itemlist, 
+            (draft)=> {
+                 draft.push({ no: new Date().getTime(), 
+                 itemname: "아이템 " + this.num});
+            }
+        )	
+        this.setState({ itemlist : newItemList });
+    }
+
+    render() {
+        return (
+            <div className="container">
+                <div className="card card-body bg-gray-300 m-2">
+                    <MyButton addItem={this.addItem.bind(this)} />
+                    <List itemlist={this.state.itemlist} />
+                </div>
+            </div>
+        );
+    }
+}
+export default App;
+
+
+
+** 4-50, P-179
+
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
+class MyButton extends Component {
+    render() {
+        return (
+            <button className="btn btn-primary" onClick={() => this.props.addItem() }>
+                Add Item!!
+            </button>  
+        )
+    }
+}
+
+MyButton.propTypes = {
+    addItem: PropTypes.func.isRequired
+};
+
+export default MyButton;
+
+
+
+** 4-51, P-180
+
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import ListItem from './ListItem';
+
+class List extends Component {
+    render() {
+        let items = this.props.itemlist.map((item) => {
+            return (<ListItem key={item.no} item={item} />)
+        });
+    
+        return (
+            <ul className="list-group">
+                {items}
+            </ul>
+        )
+    }
+}
+
+List.propTypes = {
+    itemlist : PropTypes.arrayOf(PropTypes.object)
+};
+
+export default List;
+
+
+
+** 4-52, P-181
+
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
+class ListItem extends Component {
+    render() {
+        return (
+            <li className="list-group-item list-group-item-success">
+                {this.props.item.no} : {this.props.item.item}
+            </li>
+        )
+    }
+}
+ListItem.propTypes = {
+    item : PropTypes.object.isRequired
+};
+export default ListItem;
+
+
+
+** 4-58, P-188
+
+import React from 'react';
+import ReactDOM from 'react-dom';
+import 'bootstrap/dist/css/bootstrap.css';
+import './index.css';
+import AppContainer from './components/AppContainer';
+import registerServiceWorker from './registerServiceWorker';
+
+ReactDOM.render(<AppContainer />, document.getElementById('root'));
+registerServiceWorker();
+
+
+
+** 4-59, P-189
+
+body { margin: 0; padding: 0; font-family: sans-serif; }
+.title { text-align: center; font-weight:bold; font-size:20pt; }
+.todo-done { text-decoration: line-through; }
+.container { padding:10px 10px 10px 10px; }
+.panel-borderless { border: 0; box-shadow: none; }
+.pointer { cursor:pointer; }
+
+
+
+import React, { Component } from 'react';
+import App from './App';
+import produce from 'immer';
+
+class AppContainer extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            todolist : [
+                { no:1, todo:"React학습1", done:false },
+                { no:2, todo:"React학습2", done:false },
+                { no:3, todo:"React학습3", done:true },
+                { no:4, todo:"React학습4", done:false },
+            ]
+        }
+    }
+    addTodo = (todo) => { 
+        let newTodolist = produce(this.state.todolist, (draft)=> {
+            draft.push({ no:new Date().getTime(), todo:todo, done:false })
+        })
+        this.setState({ todolist : newTodolist });
+    }
+    deleteTodo = (no) => { 
+        let index = this.state.todolist.findIndex((todo)=> todo.no === no);
+        let newTodolist = produce(this.state.todolist, (draft)=> {
+            draft.splice(index,1);
+        })
+        this.setState({ todolist : newTodolist });
+    }
+    toggleDone = (no) => { 
+        let index = this.state.todolist.findIndex((todo)=> todo.no === no);
+        let newTodolist = produce(this.state.todolist, (draft)=> {
+            draft[index].done = !draft[index].done;
+        })
+        this.setState({ todolist : newTodolist });
+    }
+
+    render() {
+        return (
+            <App 
+                todolist={this.state.todolist} 
+                addTodo={this.addTodo}
+                deleteTodo={this.deleteTodo} 
+                toggleDone={this.toggleDone} />
+        );
+    }
+}
+
+export default AppContainer;
+
+
+
+** 4-62, P-192
+
+import React, { Component } from 'react';
+import InputTodo from './InputTodo';
+import TodoList from './TodoList';
+import PropTypes from 'prop-types';
+
+class App extends Component {
+    render() {
+        return (
+            <div className="container">
+                <div className="card card-body bg-light"><div className="title">:: Todolist App</div></div>
+                <div className="card card-default card-borderless">
+                    <div className="card-body">
+                        <InputTodo addTodo={this.props.addTodo} />
+                        <TodoList todolist={this.props.todolist} 
+                            toggleDone={this.props.toggleDone} deleteTodo={this.props.deleteTodo} />
+                    </div>
+                </div>
+            </div>
+        );
+    }
+}
+App.propTypes = {
+    todolist : PropTypes.arrayOf(PropTypes.object),   
+    addTodo : PropTypes.func.isRequired,
+    deleteTodo : PropTypes.func.isRequired,   
+    toggleDone : PropTypes.func.isRequired
+}
+export default App;
+
+
+
+
+** 4-63, P-193
+
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
+class InputTodo extends Component {
+    constructor() {
+        super()
+        this.state = {
+            todo : ""
+        }
+    }
+
+    addHandler = () => {
+        this.props.addTodo(this.state.todo);
+        this.setState({ todo: "" })
+    }
+
+    enterInput = (e) => {
+        if (e.keyCode === 13)  {  
+            this.addHandler();
+        }
+    }
+
+    changeTodo = (e) => {
+        this.setState({ todo : e.target.value });
+    }
+    render() {
+        return (
+           <div className="row">
+           <div className="col">
+              <div className="input-group">
+                 <input id="msg" type="text" 
+                      className="form-control" name="msg" 
+                      placeholder="할일을 여기에 입력!" 
+                      value={this.state.todo}
+                      onChange={this.changeTodo}
+                      onKeyUp={this.enterInput} />
+                 <span 
+               className="btn btn-primary input-group-addon" 
+                      onClick={this.addHandler}>추가</span>
+                </div>
+           </div>
+           </div>
+        );
+    }
+}
+
+InputTodo.propTypes = {
+    addTodo : PropTypes.func.isRequired
+};
+
+export default InputTodo;
+
+
+
+** 4-64, P-194
+
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import TodoItem from './TodoItem';
+
+class TodoList extends Component {
+    render() {
+        let todoItems = this.props.todolist.map((item) => {
+            return (  
+               <TodoItem key={item.no}  todoitem={item}  deleteTodo={this.props.deleteTodo} 
+                    toggleDone={this.props.toggleDone} />
+            )
+        })
+        return (
+            <div className="row"> <div className="col">
+                <ul className="list-group">  
+                     {todoItems}
+                </ul>
+            </div></div>
+        );
+    }
+}
+TodoList.propTypes = {
+    todolist : PropTypes.arrayOf(PropTypes.object),
+    toggleDone : PropTypes.func.isRequired,
+    deleteTodo : PropTypes.func.isRequired
+}
+export default TodoList;
+
+
+
+** 4-65, P-195
+
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
+class TodoItem extends Component {
+    render() {
+        let itemClassName = "list-group-item";
+        if (this.props.todoitem.done) itemClassName +=" list-group-item-success";
+        return (
+            <li className={itemClassName}>
+                <span className={this.props.todoitem.done ? "todo-done pointer": "pointer"}
+                    onClick={ ()=>this.props.toggleDone(this.props.todoitem.no) }>
+                    {this.props.todoitem.todo}{ this.props.todoitem.done ? "(완료)" : "" } 
+                </span>
+                <span className="float-right badge badge-secondary pointer" 
+                    onClick={ ()=>this.props.deleteTodo(this.props.todoitem.no) }>삭제</span>
+            </li>
+        );
+    }
+}
+TodoItem.propTypes = {
+    todoitem : PropTypes.object.isRequired,
+    toggleDone : PropTypes.func.isRequired,
+    deleteTodo : PropTypes.func.isRequired,
+};
+export default TodoItem;
+
+
+
+
+
+
+
+
+
+

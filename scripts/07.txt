@@ -1,0 +1,1383 @@
+** 7-02, P-274
+
+create-react-app  routertest
+cd  routertest
+yarn add  bootstrap  react-router  react-router-dom
+
+
+** 7-03, P-275
+
+//Home.js, About.js, SongList.js, Members.js
+import React from 'react';
+const Home = () => {
+    return (
+        <div className="card card-body">
+            <h2>Home</h2>
+        </div>
+    );
+};
+export default Home;
+
+
+
+** 7-04, P-276
+
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+const Header = () => {
+    return (
+        <div className="card bg-light">
+            <div className="card-heading">
+                <h2 className="text-center m-3">Foxes And Fossils</h2>
+                <p><a href="http://foxesandfossils.com">http://foxesandfossils.com</a></p>
+                <div className="row">
+                    <div className="col-12">
+                        <Link className="btn btn-success menu" to="/">Home</Link>
+                        <Link className="btn btn-success menu" to="/about">About</Link>
+                        <Link className="btn btn-success menu" to="/members">Members</Link>
+                        <Link className="btn btn-success menu" to="/songs">Songs</Link>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default Header;
+
+
+
+** 7-05, P-277
+
+import React, { Component } from 'react';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+
+import Header from './Header';
+import Home from './Home';
+import About from './About';
+import SongList from './SongList';
+import Members from './Members';
+
+class App extends Component {
+    render() {
+        return (
+            <Router>
+                <div className="container">
+                    <Header />
+                    <Route exact path="/" component={Home} />
+                    <Route path="/about" component={About} />
+                    <Route path="/members" component={Members} />
+                    <Route path="/songs" component={SongList} />
+                </div>
+            </Router>
+        );
+    }
+}
+
+export default App;
+
+
+
+** 7-06, P-278
+
+body { margin: 0; padding: 0; font-family: sans-serif; }
+.container { 
+     text-align: center; margin-top:20px; 
+}
+.menu { width:25%; border-radius:0 !important; }
+
+
+
+import React from 'react';
+import ReactDOM from 'react-dom';
+import 'bootstrap/dist/css/bootstrap.css';
+import './index.css';
+import App from './components/App';
+import * as serviceWorker from './serviceWorker';
+
+ReactDOM.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+  document.getElementById('root')
+);
+serviceWorker.unregister();
+
+
+
+** 7-09, P-282
+
+import React from 'react';
+
+const About = (props) => {
+    return (
+        <div className="card card-body">
+            <h2>About {props.title}</h2>
+        </div>
+    );
+};
+
+export default About;
+
+
+
+** 7-10, P-283
+
+<Route path="/about" component={About} title="여우와 늙은이들" />
+
+
+** 7-11, P-284
+
+<Route path="/about" render={ (props) => <About {...props} title="여우와 늙은이들" />  } />
+
+
+
+** 7-12, P-285
+
+import React, { useState } from 'react';
+......
+
+const App = () => {
+    const [members, setMember] = useState([
+        { name: 'Maggie Adams', photo: 'photos/Mag.png' },
+        { name: 'Sammie Purcell', photo: 'photos/Sam.png' },
+        { name: 'Tim Purcell', photo: 'photos/Tim.png' },
+        { name: 'Scott King', photo: 'photos/King.png' },
+        { name: 'Johnny Pike', photo: 'photos/JPike.jpg' },
+        { name: 'Toby Ruckert', photo: 'photos/Toby.jpg' },
+    ]);
+    return (
+        <Router>
+            <div className="container">
+                <Header />
+                <Route exact path="/" component={Home} />
+                <Route path="/about" render={ (props) => <About {...props} title="여우와 늙은이들" />  } />
+                <Route path="/members" 
+                    render={ (props) => <Members {...props} members={members} /> } />
+                <Route path="/songs" component={SongList} />
+            </div>
+        </Router>
+    );
+};
+
+export default App;
+
+
+
+** 7-14, P-287
+
+import React from 'react';
+
+const Members = (props) => {
+    let imgstyle={ width: 90, height:80 }
+    let list = props.members.map((member)=> {
+      return (
+        <div className="col-sm-6 col-md-4 col-lg-3" key={member.name}>
+          <img src={member.photo} className="img-thumbnail"
+            alt={member.name} style={imgstyle} /><br />
+          <h6>{ member.name }</h6><br /><br/>
+        </div>
+      )
+    })
+    return (
+      <div>
+        <h2 class="m-4">Members</h2>
+        <div className="container">
+          <div className="row">
+            {list}
+          </div>
+        </div>
+      </div>
+    )
+};
+
+export default Members;
+
+
+
+** 7-17, P-291
+
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+......
+import SongDetail from './SongDetail';
+
+const App = () => {
+    const [members] = useState([ ...... (생략) ...... ]);
+    const [songs] = useState([
+        { id:1, title:"Fallin' for you", musician:'Colbie callet', youtubel_ink:'PABUl_EX_hw' },
+        { id:2, title:"Can't hurry love", musician:'The supremes', youtube_link:'EJDPhjQft04' },
+        { id:3, title:"Landslide", musician:'Dixie chicks', youtube_link:'V2N7gYom9-A' },
+        { id:4, title:"Can't let go", musician:'Linda ronstadt', youtube_link:'P-EpGKXmoe4' },
+        { id:5, title:"Doctor my eyes", musician:'Jackson Browne', youtube_link:'7JlFKS_1oZk' },
+        { id:6, title:"We gotta get you a woman", musician:'Todd Rundgren', youtube_link:'EyUjbBViAGE' },
+        { id:7, title:"Hip to my heart", musician:'Band Perry', youtube_link:'vpLCFnD9LFo' },
+        { id:8, title:"Rolling in the deep", musician:'Adele', youtube_link:'EvK8pDK6IQU' }
+    ]);
+
+    return (
+        <Router>
+            <div className="container">
+                <Header />
+                <Route exact path="/" component={Home} />
+                <Route path="/about" 
+                    render={ (props) => <About {...props} title="여우와 늙은이들" />  } />
+                <Route path="/members" 
+                    render={ (props) => <Members {...props} members={members} /> } />
+                <Route exact path="/songs" 
+                    render={(props) => <SongList {...props} songs={songs} /> } />
+                <Route path="/songs/:id" 
+                    render={(props) => <SongDetail {...props} songs={songs} /> } />
+            </div>
+        </Router>
+    );
+};
+
+export default App;
+
+
+
+
+** 7-19, P-293
+
+import React from 'react'
+import { Link } from 'react-router-dom';
+
+const SongList = (props) => {
+    let list = props.songs.map((song)=> {
+        return (
+            <li className="list-group-item" key={song.id}>
+                <Link to={`/songs/${song.id}`}>
+                    {song.title} (original musician : {song.musician})
+                </Link>
+            </li>
+        )
+    });
+    return (
+        <div>
+            <h2 className="m-5">Song List</h2>
+            <ul className="list-group">
+              {list}
+            </ul>
+        </div>
+    )
+}
+    
+export default SongList;
+
+
+
+** 7-20, P-294
+
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+const SongDetail = (props) => {
+    const id = props.match.params.id;
+    const song = props.songs.find((song)=> song.id === parseInt(id,10));
+    const full_link = `https://m.youtube.com/watch?v=${song.youtube_link}`;
+    
+    return (
+        <div className="mt-5">
+            <h2>{song.title}</h2>
+            <p>Original Musician : {song.musician}</p>
+            <p><a href={full_link} target="new">View Youtube</a></p>
+            <Link to="/songs">Return SongList</Link>
+        </div>
+    );
+};
+
+export default SongDetail;
+
+
+
+** 7-25, P-300
+
+yarn add youtube-player-react
+
+
+
+import React from 'react';
+import YoutubeReact from 'youtube-player-react'
+
+const Player = (props) => {
+    const id = props.match.params.id;
+    const song = props.songs.find((song)=> song.id === parseInt(id,10));
+    return (
+        <div className="mt-5">
+            <YoutubeReact videoid={song.youtube_link} 
+                listType="search" autoplay={1} origin="http://localhost:3000" />
+        </div>
+    );
+};
+
+export default Player;
+
+
+
+** 7-26, P-301
+//<i className="fa fa-play"></i> 는 플레이 버튼 아이콘을 출력함,
+//이를 위해서 FontAwesome 이 필요하며 이를 위해서 src/index.css에 다음의 코드를 첫번째 라인에 삽입한다.
+@import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css';
+
+
+
+import React from 'react'
+import { Link, Route } from 'react-router-dom';
+import Player from './Player';
+const SongList = (props) => {
+    let list = props.songs.map((song)=> {
+        let cn = "list-group-item";
+        if (props.match.path + "/" + song.id === props.location.pathname) {
+          cn += " list-group-item-secondary";
+        }
+        return (
+            <li className={cn} key={song.id}>
+                <Link to={`/songs/${song.id}`}>
+                    {song.title} (musician: {song.musician})
+                    <span className="float-right badge badge-secondary">
+                        <i className="fa fa-play"></i>
+                    </span>
+                </Link>
+            </li>
+        )
+    });
+    return (
+        <div>
+            <h2 className="m-5">Song List</h2>
+            <ul className="list-group">
+              {list}
+            </ul>
+            <Route path={`${props.match.path}/:id`}
+                render={(routeProps)=> <Player {...routeProps} songs={props.songs} />} />
+        </div>
+    )
+}
+    
+export default SongList;
+
+
+
+
+** 7-28, P-303
+
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+......
+const App = () => {
+    ......
+    return (
+        <Router>
+            <div className="container">
+                <Header />
+                <Route exact path="/" component={Home} />
+                <Route path="/about" render={ (props) => <About {...props} title="여우와 늙은이들" />  } />
+                <Route path="/members" 
+                    render={ (props) => <Members {...props} members={members} /> } />
+                <Route path="/songs" render={(props) => <SongList {...props} songs={songs} /> } />
+            </div>
+        </Router>
+    );
+};
+
+export default App;
+
+
+
+** 7-33, P-309
+
+import React from 'react';
+const Members = (props) => {    const goHome = () => {
+      if (window.confirm('정말로 홈으로 이동할까요?') === true) {
+        props.history.push('/');
+      }  
+    }
+    ......
+    return (
+      <div>
+        <h2 className="m-4">Members</h2>
+        <div className="container">
+          <div className="row">
+            {list}
+          </div>
+        </div>
+        <button className="btn btn-secondary" 
+             onClick={goHome} >
+             Home으로 이동
+        </button>
+      </div>
+    )
+};
+
+export default Members;
+
+
+
+** 7-36, P-313
+
+import React from 'react';
+
+const NotFound = (props) => {
+    return (
+        <div className="m-3">
+            <h3>존재하지 않는 경로</h3>
+            <p>
+                요청 경로 : {props.location.pathname}
+            </p>
+        </div>
+    );
+};
+
+export default NotFound;
+
+
+
+** 7-37, P-314
+
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
+......
+import NotFound from './NotFound';
+
+const App = () => {
+    ......
+    return (
+        <Router>
+            <div className="container">
+            <Header />
+            <Switch>
+                <Route path="/home" component={Home} />
+                <Route path="/about" render={ (props) => <About {...props} title="여우와 늙은이들" />  } />
+                <Route path="/members" 
+                    render={ (props) => <Members {...props} members={members} /> } />
+                <Route path="/songs" render={(props) => <SongList {...props} songs={songs} /> } />
+                <Redirect exact from="/" to="/home"/>
+                <Route component={NotFound} />
+            </Switch>
+            </div>
+        </Router>
+    );
+};
+
+export default App;
+
+
+
+** 7-40, P-318
+
+create-react-app  routerconfig-test
+cd  routerconfig-test
+yarn add bootstrap  react-router  react-router-dom  react-router-config
+
+
+
+
+** 7-41, P-319
+
+import Home from './components/Home';
+import About from './components/About';
+import Songs from './components/Songs/index';
+import SongList from './components/Songs/SongList';
+import SongDetail from './components/Songs/SongDetail';
+import NotFound from './components/NotFound';
+
+const songs = [
+    { id:1, title:"Fallin' for you", musician:'Colbie callet', youtube_link:'PABUl_EX_hw' },
+     ......(생략)
+];
+
+const routes = [
+    { path: '/', exact: true, component: Home },
+    { path: '/about', component: About	},
+    { 
+        path: '/songs', 
+        component: Songs,
+        routes : [
+            { path: '/songs', exact: true, component: SongList },
+            { path: '/songs/:id', component:SongDetail }
+        ]
+    },
+    { path: '*', component: NotFound }
+]
+
+export { songs, routes };
+
+
+
+** 7-42, P-320
+
+import React from 'react';
+
+const Home = () => {
+    return (
+        <div className="card card-body">
+            <h2>Home</h2>
+        </div>
+    );
+};
+
+export default Home;
+
+
+
+** 7-43, P-321
+
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+const Header = () => {
+    return (
+        <div className="card bg-light">
+            <div className="card-heading">
+                <h2 className="text-center m-3">Router Config App</h2>
+                <div className="row">
+                    <div className="col-12">
+                        <Link className="btn btn-success menu" to="/">Home</Link>
+                        <Link className="btn btn-success menu" to="/about">About</Link>
+                        <Link className="btn btn-success menu" to="/songs">Songs</Link>
+                        <Link className="btn btn-success menu" to="/asdf">ASDF</Link>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default Header;
+
+
+
+** 7-44, P-322
+
+import { renderRoutes } from 'react-router-config'
+import { routes } from '../routes'
+const Main = () => {
+    return renderRoutes(routes);
+};
+
+export default Main;
+
+
+** 7-45, P-323
+
+import { renderRoutes } from 'react-router-config'
+
+const Songs = (props) => {
+    return renderRoutes(props.route.routes);
+};
+export default Songs;
+
+
+
+** 7-46, P-324
+
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { songs } from '../../routes'
+
+const SongList = () => {
+    let songlist = songs.map((song)=>{
+        return (
+            <li className="list-group-item" key={song.id}>
+                <Link to={'/songs/'+song.id}> {song.title}</Link>
+            </li>
+        )
+    })
+    return (
+        <div>
+            <h2 className="m-5">Song List</h2>
+            <ul className="list-group">
+                {songlist}
+            </ul>
+        </div>
+    );
+};
+
+export default SongList;
+
+
+
+** 7-47, P-325
+
+import React from 'react';
+import { songs } from '../../routes'
+import { Link } from 'react-router-dom';
+
+const SongDetail = (props) => {
+    const songone = songs.find((song)=>song.id === parseInt(props.match.params.id,10));
+    if (!songone) {
+        return (
+            <div><h2>존재하지 않는 곡!!</h2></div>
+        )
+    } else {
+        const full_link = `https://www.youtube.com/watch?v=${songone.youtube_link}`;
+        return (
+            <div className="m-5">
+                <h2>{songone.title}</h2>
+                <p>Original Musician : { songone.musician}</p>
+                <p><a href={full_link} target="new">View Youtube</a></p>
+                <Link to="/songs">Return SongList</Link>
+            </div>
+        );
+    }
+};
+
+export default SongDetail;
+
+
+
+** 7-48, P-326
+
+import React from 'react';
+import Header from './Header'
+import Main from './Main'
+
+const App = () => {
+    return (
+        <div className="container">
+            <Header />
+            <Main />
+        </div>
+    );
+};
+
+export default App;
+
+
+
+** 7-49, P-327
+
+......
+import { BrowserRouter as Router } from 'react-router-dom'
+import 'bootstrap/dist/css/bootstrap.css';
+import './index.css';
+import App from './components/App';
+......
+
+ReactDOM.render(
+  <React.StrictMode>
+    <Router>
+       <App />
+    </Router>
+  </React.StrictMode>,
+  document.getElementById('root')
+);
+
+serviceWorker.unregister();
+
+
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+.container { text-align: center; margin-top:20px;}
+.menu {  width:25%; border-radius:0 !important; }
+
+
+
+
+** 7-53, P-333
+
+//사용자 리스트 : 실제는 백엔드를 통해서 JWT와 같은 토큰을 받아오도록 작성
+const staticUsers = [
+    { userid:"user1", password:"1234", roles: [ "users" ] },
+    { userid:"user2", password:"1234", roles: [ "users" ] },
+    { userid:"admin", password:"1234", roles: [ "admins", "users" ] },
+];
+
+//경로에 접근할 때 필요한 Role 정보
+const pathToRoles = [
+    { path: "/users", role: "users" },
+    { path: "/admins", role: "admins" },
+];
+
+//인증 기능
+let userInfo = null;
+const auth = {
+    login(userid, password, callback) {
+        const user = staticUsers.find((u)=>{
+            return u.userid === userid && u.password === password;
+        })
+
+        if (user) {
+            userInfo = { userid:user.userid, roles:user.roles };
+            callback();
+        } else {
+            alert('로그인 실패!!');
+        }
+    },
+    logout(callback) {
+        userInfo = null;
+        callback();
+    },
+    currentUserInfo() {
+        return userInfo;
+    },
+    isMatchToRoles(path) {
+        let pathToRole = pathToRoles.find((p)=> p.path === path)
+        if (!pathToRole) return false;
+        
+        if (!userInfo) return false;
+        let index = userInfo.roles.findIndex((r)=> pathToRole.role===r);
+        return index >= 0 ? true : false;
+    }
+}
+
+export default auth;
+
+
+
+
+** 7-55, P-335
+
+import React from 'react';
+import { Route, Redirect } from 'react-router-dom';
+import auth from './auth';
+
+function ProtectedRoute({ children, ...rest }) {
+    return (
+      <Route
+        {...rest}
+        render={({ location }) =>
+        auth.isMatchToRoles(location.pathname) ? (
+            children
+          ) : (
+            <Redirect
+              to={{
+                pathname: "/login",
+                state: { from: location }
+              }}
+            />
+          )
+        }
+      />
+    );
+}
+
+export default ProtectedRoute;
+
+
+
+** 7-56, P-336
+
+//AdminPage.js
+import React from 'react';
+import auth from '../auth';
+
+const AdminPage = () => {
+    const userInfo = auth.currentUserInfo();
+    return (
+        <div>
+            <h3>관리자 페이지 : admins 역할이 있어야 함.</h3>
+            <p>userid : {userInfo.userid}</p>
+            <p>roles : {userInfo.roles.join(',')}</p>
+        </div>
+    );
+};
+export default AdminPage;
+
+
+//UserPage.js
+import React from 'react';
+import auth from '../auth';
+
+const UserPage = () => {
+    const userInfo = auth.currentUserInfo();
+    return (
+        <div>
+            <h3>사용자 페이지 : users 역할이 있어야 함.</h3>
+            <p>userid : {userInfo.userid}</p>
+            <p>roles : {userInfo.roles.join(',')}</p>
+        </div>
+    );
+};
+export default UserPage;
+
+
+
+//PublicPage
+import React from 'react';
+
+const PublicPage = () => {
+    return (
+        <div>
+            <h3>Home : 로그인하지 않아도 접근가능한 페이지</h3>
+        </div>
+    );
+};
+
+export default PublicPage;
+
+
+
+** 7-57, P-337
+
+import React, { useState } from 'react';
+import { useHistory, useLocation } from "react-router-dom";
+import auth from '../auth';
+
+const LoginPage = () => {
+    let history = useHistory();
+    let location = useLocation();
+    let [userid, setUserid] = useState('');
+    let [password, setPassword] = useState('');
+    let { from } = location.state || { from: { pathname: "/" } };
+    const login = () => {
+        auth.login(userid, password, () => {
+            history.replace(from);
+        });
+    };
+    return (
+      <div>
+        아이디 : <input type="text" value={userid} onChange={(e)=>setUserid(e.target.value)} /><br/>
+        암호 : <input type="password" value={password}  onChange={(e)=>setPassword(e.target.value)} /><br />
+        <button onClick={login}>로그인</button>
+      </div>
+    );
+};
+
+export default LoginPage;
+
+
+
+** 7-58, P-338
+
+import React from 'react';
+import { useHistory } from 'react-router-dom';
+import auth from '../auth';
+
+const AuthButton = () => {
+    let history = useHistory();
+ 
+    return auth.currentUserInfo() ? (
+      <p>
+        로그인 중 : (역할: {auth.currentUserInfo().roles.join(',')})
+        <button onClick={() => { auth.logout(() => history.push("/"));  }} >logout </button>
+      </p>
+    ) : (
+      <p>로그인하지 않았음.</p>
+    );
+};
+
+export default AuthButton;
+
+
+** 7-59, P-339
+
+import React from 'react';
+import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
+import ProtectedRoute from './ProtectedRoute';
+......
+
+const App = () => {
+    return (
+        <Router>
+        <div style={{ margin:'10px' }}>
+            <ul>
+                <li><Link to="/">홈</Link></li>
+                <li><Link to="/users">사용자페이지</Link></li>
+                <li><Link to="/admins">관리자페이지</Link></li>
+            </ul>
+            <AuthButton />
+            <Switch>
+                <Route exact path="/"><PublicPage /></Route>
+                <Route path="/login"><LoginPage /></Route>
+                <ProtectedRoute path="/users"><UserPage /></ProtectedRoute>
+                <ProtectedRoute path="/admins"><AdminPage /></ProtectedRoute>
+            </Switch>
+        </div>
+        </Router>
+    );
+};
+
+export default App;
+
+
+
+** 7-62, P-343
+
+//기존 코드
+import  Home  from './Home ';
+
+//React.lazy() 사용
+const Home = React.lazy(()=> import("./Home"));
+
+//webpackChunkName 지정
+const Home = React.lazy(()=> import(/* webpackChunkName:"home" */ "./Home"));
+
+
+
+
+** 7-63, P-344
+
+<React.Suspense fallback={<Loading />}>
+     <TestComponent />
+</React.Suspense>
+
+
+<React.Suspense fallback={<Loading />}>
+    <Router>
+         ......
+    </Router>
+</React.Suspense>
+
+
+
+** 7-64, P-345
+
+yarn add  react-loader-spinner  p-min-delay
+
+
+
+
+import React from 'react';
+import Loader from "react-loader-spinner";
+
+const Loading = () => {
+    return (
+        <div className="w-100 h-75 position-fixed">
+            <div className="row w-100 h-100 justify-content-center align-items-center">
+                <div className="col-6 text-center">
+                    <h3>Loading</h3>
+                    <Loader type="Bars" color="gray" height={40} width={40} />
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default Loading;
+
+
+
+** 7-65, P-346
+
+......
+import pMinDelay from 'p-min-delay';
+import Header from './Header';
+import Loading from './Loading';
+......
+const Home = React.lazy(()=> pMinDelay(import(/* webpackChunkName:"home" */ "./Home"), 1000));
+const About = React.lazy(()=> pMinDelay(import(/* webpackChunkName:"about" */ "./About"), 1000));
+const SongList = React.lazy(()=> pMinDelay(import(/* webpackChunkName:"songs" */ "./SongList"), 1000));
+const Members = React.lazy(()=> pMinDelay(import(/* webpackChunkName:"members" */ "./Members"), 1000));
+const NotFound = React.lazy(()=> pMinDelay(import(/* webpackChunkName:"home" */ "./NotFound"), 1000));
+
+const App = () => {
+    ......
+    return (
+      <React.Suspense fallback={<Loading />}>
+          <Router>
+              <div className="container">
+              <Header />
+              <Switch>
+                  ......
+              </Switch>
+              </div>
+          </Router>
+      </React.Suspense>
+    );
+};
+export default App;
+
+
+
+** 7-67, P-348
+
+import MyErrorBoundary from './MyErrorBoundary';
+......
+
+const App = () => {
+    ......
+    return (
+      <MyErrorBoundary>
+      <React.Suspense fallback={<Loading />}>
+          <Router>
+              <div className="container">
+              <Header />
+              <Switch>
+                  ......
+              </Switch>
+              </div>
+          </Router>
+      </React.Suspense>
+      </MyErrorBoundary>
+    );
+};
+export default App;
+
+
+
+** 7-68, P-350
+create-react-app todolistapp && cd todolistapp
+yarn add immer bootstrap react-router react-router-dom
+
+
+** 7-70, P-352
+
+import React from 'react';
+import ReactDOM from 'react-dom';
+import 'bootstrap/dist/css/bootstrap.css';
+import './index.css';
+import AppContainer from './AppContainer';
+import * as serviceWorker from './serviceWorker';
+
+ReactDOM.render(
+  <React.StrictMode>
+    <AppContainer />
+  </React.StrictMode>,
+  document.getElementById('root')
+);
+serviceWorker.unregister();
+
+
+
+body { margin: 0; padding: 0; font-family: sans-serif; }
+.title { text-align: center; font-weight:bold; font-size:20pt; }
+.todo-done { text-decoration: line-through; }
+.container { padding:10px 10px 10px 10px; }
+.panel-borderless { border: 0; box-shadow: none; }
+.pointer { cursor:pointer; }
+
+
+
+** 7-71, P-353
+
+import React, { useState } from 'react';
+import App from './App';
+import produce from 'immer';
+
+const AppContainer = () => {
+    let [todolist, setTodoList] = useState([
+        { id:1, todo:"ES6학습", desc:"설명1", done:false },
+        { id:2, todo:"React학습", desc:"설명2", done:false },
+        { id:3, todo:"ContextAPI 학습", desc:"설명3", done:true },
+        { id:4, todo:"야구경기 관람", desc:"설명4", done:false },
+    ])
+    const addTodo = (todo, desc) => {
+        let newTodolist = produce(todolist, (draft)=> {
+            draft.push({ id:new Date().getTime(), todo, desc, done:false })
+        })
+        setTodoList(newTodolist);
+    }
+    const deleteTodo = (id) => { 
+        let index = todolist.findIndex((todo)=> todo.id === id);
+        let newTodolist = produce(todolist, (draft)=> {
+            draft.splice(index,1);
+        })
+        setTodoList(newTodolist);
+    }
+    const toggleDone = (id) => { 
+        let index = todolist.findIndex((todo)=> todo.id === id);
+        let newTodolist = produce(todolist, (draft)=> {
+            draft[index].done = !draft[index].done;
+        })
+        setTodoList(newTodolist);
+    }
+    const updateTodo = (id, todo, desc, done) => {
+        let index = todolist.findIndex((todo)=> todo.id === id);
+        let newTodolist = produce(todolist, (draft)=> {
+           draft[index] = { ...draft[index], todo, desc, done }
+        })
+        setTodoList(newTodolist);
+    }
+
+    const getTodoOne = (id) => todolist.find((todo)=>todo.id === parseInt(id,10));
+    const callbacks = { addTodo, deleteTodo, updateTodo, toggleDone, getTodoOne };
+    const states = { todolist };
+
+    return (
+        <App callbacks={callbacks} states={states} />
+    );
+};
+
+export default AppContainer;
+
+
+
+** 7-73, P-355
+
+import React from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import Header from './components/Header';
+import Home from './pages/Home';
+import About from './pages/About';
+import TodoList from './pages/TodoList';
+import AddTodo from './pages/AddTodo';
+import EditTodo from './pages/EditTodo';
+import NotFound from './pages/NotFound';
+
+const App = (props) => {
+  return (
+    <Router>
+    <div className="container">
+        <Header />
+        <Switch>
+          <Route exact path="/" component={Home} />
+          <Route path="/about" component={About} />
+          <Route exact path="/todos" render={ (rprops)=> 
+            <TodoList {...rprops} states={props.states}
+                callbacks={props.callbacks} />
+          } />
+          <Route path="/todos/add"  render={ (rprops)=> 
+            <AddTodo {...rprops} callbacks={props.callbacks} />
+          } />
+          <Route path="/todos/edit/:id" render={ (rprops)=> 
+            <EditTodo {...rprops} callbacks={props.callbacks} />
+          } />
+          <Route component={NotFound} />
+        </Switch>
+    </div>
+    </Router>
+  );
+};
+
+App.propTypes = {
+  states : PropTypes.object.isRequired,
+  callbacks : PropTypes.object.isRequired,
+};
+
+export default App;
+
+
+
+** 7-74, P-356
+
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+
+const Header = () => {
+    let [isNavShow, setIsNavShow] = useState(false);    return (
+        <nav className="navbar navbar-expand-md bg-dark navbar-dark">
+        <span className="navbar-brand">TodoList App</span>
+        <button className="navbar-toggler" type="button" onClick={ ()=>setIsNavShow(!isNavShow) }>
+            <span className="navbar-toggler-icon"></span>
+        </button>        <div className={ isNavShow ? "collapse navbar-collapse show" : "collapse navbar-collapse" }>
+            <ul className="navbar-nav">
+                <li className="nav-item"><Link className="nav-link" to="/">Home</Link></li>
+                <li className="nav-item"><Link className="nav-link" to="/about">About</Link></li>
+                <li className="nav-item"><Link className="nav-link" to="/todos">TodoList</Link></li>
+            </ul>
+        </div>
+        </nav>
+    );
+};
+
+export default Header;
+
+
+** 7-75, P-357
+
+//Home, About
+import React from 'react';
+
+const Home = () => {
+    return (
+        <div className="card card-body">
+            <h2>Home</h2>
+        </div>
+    );
+};
+export default Home;
+
+//NotFound
+import React from 'react';
+const NotFound = (props) => {
+    return (
+        <div className="m-3">
+            <h3>존재하지 않는 경로</h3>
+            <p>요청 경로 : {props.location.pathname}</p>
+        </div>
+    );
+};
+export default NotFound;
+
+
+
+
+** 7-76, P-358
+
+import React from 'react';
+import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import TodoItem from './TodoItem';
+
+const TodoList = (props) => {
+    let todoItems = props.states.todolist.map((item)=> {
+        return <TodoItem key={item.id} todoitem={item} callbacks={props.callbacks} />
+    })    return (
+        <>
+        <div className="row">
+            <div className="col p-3">
+                <Link className="btn btn-primary" to="/todos/add">연락처 추가</Link>
+            </div>
+        </div>
+        <div className="row">
+            <div className="col">
+                <ul className="list-group">{todoItems}</ul>
+            </div>
+        </div>
+        </>
+    );
+};
+
+export default TodoList;
+
+
+
+
+** 7-77, P-359
+
+import React from 'react';
+import { useHistory } from 'react-router-dom';
+import PropTypes from 'prop-types';
+
+const TodoItem = (props) => {
+    const history = useHistory();
+    let itemClassName = "list-group-item";
+    if (props.todoitem.done) itemClassName +=" list-group-item-success";
+    return (
+        <li className={itemClassName}>
+            <span className={props.todoitem.done ? "todo-done pointer": "pointer"}
+                onClick={ ()=>props.callbacks.toggleDone(props.todoitem.id) }>
+                {props.todoitem.todo}{ props.todoitem.done ? "(완료)" : "" } 
+            </span>
+            <span className="float-right badge badge-secondary pointer m-1" 
+                onClick={ ()=>history.push('/todos/edit/'+props.todoitem.id) }>편집</span>
+            <span className="float-right badge badge-secondary pointer m-1" 
+                onClick={ ()=>props.callbacks.deleteTodo(props.todoitem.id) }>삭제</span>
+        </li>
+    );
+};
+
+TodoItem.propTypes = {
+    todoitem : PropTypes.object.isRequired,
+    callbacks : PropTypes.object.isRequired,
+};
+
+export default TodoItem;
+
+
+
+** 7-78, P-360
+
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+
+const AddTodo = props => {
+    let [ todo, setTodo ] = useState('');
+    let [ desc, setDesc ] = useState('');
+    
+    const addContactHandler = ()=> {
+        if (todo.trim() === "" || desc.trim()==="") {
+            alert('반드시 할일, 설명을 입력해야 합니다.');
+            return;
+        } 
+        props.callbacks.addTodo(todo, desc);
+        props.history.push('/todos'); 
+    }
+    return (
+        <>
+        <div className="row">
+            <div className="col p-3">
+                <h2>연락처 추가</h2>
+            </div>
+        </div>
+        <div className="row">
+            <div className="col">
+            <div className="form-group">
+                    <label htmlFor="todo">할일 :</label>
+                    <input type="text" className="form-control" id="todo" 
+                        value={todo} onChange={(e)=>setTodo(e.target.value)} />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="desc">설명 :</label>
+                    <textarea className="form-control" rows="3" id="desc" 
+                        value={desc} onChange={(e)=>setDesc(e.target.value)}></textarea>  
+                </div>
+                <div className="form-group">
+                    <button type="button" className="btn btn-primary m-1"
+                        onClick={addContactHandler}>추 가</button>
+                    <button type="button" className="btn btn-primary m-1" 
+                        onClick={()=>props.history.push('/todos')}>취 소</button>
+                </div>
+            </div>
+        </div>
+        </>
+    );
+};
+
+AddTodo.propTypes = {
+    callbacks :PropTypes.object.isRequired,
+};
+
+export default AddTodo;
+
+
+
+** 7-80, P-362
+
+import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import PropTypes from 'prop-types';
+
+const EditTodo = props => {
+    const history = useHistory();
+    const todoitem = props.callbacks.getTodoOne(props.match.params.id);
+    const [ todoOne, setTodoOne ] = useState({ ...todoitem });        const updateContactHandler = ()=> {
+        if (todoOne.todo.trim() === "" || todoOne.desc.trim()==="") {
+            alert('반드시 할일, 설명을 입력해야 합니다.');
+            return;
+        }
+        let { id, todo, desc, done } = todoOne;
+        props.callbacks.updateTodo(id, todo, desc, done);
+        history.push('/todos');
+    }
+
+    return (
+        <>
+        <div className="row">
+            <div className="col p-3">
+                <h2>연락처 수정</h2>
+            </div>
+        </div>
+        <div className="row">
+            <div className="col">
+                <input type="hidden" className="form-control" id="id" defaultValue={todoOne.id} disabled />
+                <div className="form-group">
+                    <label htmlFor="todo">할일:</label>
+                    <input type="text" className="form-control" id="todo" value={todoOne.todo} 
+                         onChange={(e)=>setTodoOne({ ...todoOne, todo:e.target.value })} />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="desc">설명:</label>
+                    <textarea className="form-control" rows="3" id="desc" value={todoOne.desc} 
+                          onChange={(e)=>setTodoOne({ ...todoOne, desc:e.target.value })}></textarea>  
+                </div>
+                <div className="form-group">
+                    <label htmlFor="done">완료여부 : </label>{' '}
+                    <input type="checkbox" checked={todoOne.done} 
+                          onChange={(e)=>setTodoOne({ ...todoOne, done:e.target.checked })} />
+                </div>
+                <div className="form-group">
+                    <button type="button" className="btn btn-primary m-1" onClick={updateContactHandler}>수 정</button>
+                    <button type="button" className="btn btn-primary m-1" 
+                         onClick={()=>history.push('/todos')}>취 소</button>
+                </div>
+            </div>
+        </div>
+        </>
+    );
+};
+
+EditTodo.propTypes = {
+    callbacks :PropTypes.object.isRequired,
+};
+
+export default EditTodo;
+
+

@@ -1,0 +1,552 @@
+** 12-04, P-533
+
+mkdir  webpacktest
+cd webpacktest
+npm init
+
+
+npm install --save-dev webpack webpack-cli
+
+npm install -g live-server
+
+
+
+** 12-05, P-534
+
+var employees =  [ 
+        { "no":1001, "name" : "홍길동", "email":"gdhong@opensg.net", "mobile":"010-2222-3331" },
+        { "no":1002, "name" : "이몽룡", "email":"mrlee@opensg.net", "mobile":"010-2222-3332" },
+        { "no":1003, "name" : "성춘향", "email":"chsung@opensg.net", "mobile":"010-2222-3333" },
+        { "no":1004, "name" : "박문수", "email":"mspark@opensg.net", "mobile":"010-2222-3334" },
+        { "no":1005, "name" : "변학도", "email":"hdbyun@opensg.net", "mobile":"010-2222-3335" }
+];
+
+module.exports = employees;
+
+
+
+let employees = require('./employees');
+var str = "";
+for (var i=0; i < employees.length; i++) {
+    str += '<div>' + employees[i].name + ' : ' + employees[i].email +
+              ', ' + employees[i].mobile + '</div>';
+}
+document.getElementById('app').innerHTML = str;
+
+
+
+** 12-06, P-535
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>웹팩 예제</title>
+</head>
+<body>
+  <div id="app"></div>
+  <script src="bundle.js"></script>
+</body>
+</html>
+
+
+** 12-07, P-536
+
+module.exports = { 
+   mode : 'development',
+   entry: __dirname + '/src/app.js', 
+   output: { 
+       path: __dirname + '/public', 
+       filename: 'bundle.js' 
+   } 
+};
+
+
+
+
+** 12-08, P-537
+
+module.exports = { 
+    devtool : 'source-map',
+    mode : 'development',
+    entry: __dirname + '/src/app.js', 
+    output: { 
+        path: __dirname + '/public', 
+        filename: 'bundle.js' 
+    } 
+};
+
+
+
+{
+  "name": "webpacktest",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build" : "webpack --config webpack.prod.config.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^4.41.6",
+    "webpack-cli": "^3.3.11",
+  }
+}
+
+
+
+** 12-10, P-540
+
+npm install webpack-dev-server  --save-dev
+
+
+
+module.exports = {
+    ......
+    devServer : {
+        contentBase : './public',
+        inline:true, 
+        historyApiFallback :true,
+        port : 7777
+    }
+};
+
+
+
+** 12-11, P-541
+
+{
+  "name": "webpacktest",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --config webpack.prod.config.js",
+    "start": "webpack-dev-server --hot --open"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^4.41.6",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.3"
+  }
+}
+
+
+
+
+** 12-12, P-542
+
+let employees = require('./employees');
+var str = "";
+str += "<h2>직원정보</h2><hr />"
+for (var i=0; i < employees.length; i++) {
+    str += '<div>' + employees[i].name + ' : ' 
+              + employees[i].email + ', '
+              + employees[i].mobile + '</div>';
+}
+document.getElementById('app').innerHTML = str;
+
+
+
+** 12-14, P-546
+
+npm install --save-dev json-loader
+
+//data.json
+{
+    "title": "직원 정보",
+    "employees" : [ 
+        { "no":1001, "name" : "홍길동", "email":"gdhong@opensg.net", "mobile":"010-2222-3331" },
+        { "no":1002, "name" : "이몽룡", "email":"mrlee@opensg.net", "mobile":"010-2222-3332" },
+        ......
+    ]
+}
+
+
+//app.js
+var data = require("./data.json");
+
+var str = "";
+str += "<h1>" + data.title + "</h1><hr />"
+for (var i=0; i < data.employees.length; i++) {
+    var e = data.employees[i];
+    str += '<div>' + e.name + ' : ' + e.email +
+              ', ' + e.mobile + '</div>';
+}
+document.getElementById('app').innerHTML = str;
+
+
+
+
+** 12-17, P-548
+
+npm install --save-dev babel-loader @babel/core @babel/preset-env @babel/preset-stage-2 @babel/preset-react 
+npm install --save react react-dom
+
+
+
+
+** 12-18, P-549
+
+module.exports = { 
+    ......
+   module: {
+        rules: [
+            {
+                test: /\.js$/,
+                exclude: /(node_modules|bower_components)/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['@babel/preset-env', '@babel/preset-react'],
+                        plugins: ['@babel/plugin-proposal-object-rest-spread']
+                    }
+                }
+            }
+        ]
+    }
+};
+
+
+
+** 12-19, P-550
+
+module.exports = { 
+    ......
+    entry: __dirname + '/src/main.js', 
+    ......
+};
+
+
+
+
+** 12-20, P-551
+
+import React, { Component } from 'react';
+import data from './data.json';
+
+class App extends Component {
+    render() {
+        var emplist = data.employees.map((item, index) => {
+            return (
+                <tr key={item.no}>
+                    <td>{item.no}</td>
+                    <td>{item.name}</td>
+                    <td>{item.mobile}</td>
+                    <td>{item.email}</td>
+                </tr>
+            )
+        })
+        
+        return (
+            <div>
+                <h1>{data.title}</h1><hr/>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>번호</th><th>이름</th>
+                            <th>모바일</th><th>이메일</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {emplist}
+                    </tbody>
+                </table>
+            </div>
+        );
+    }
+}
+
+export default App;
+
+
+
+
+
+** 12-21, P-552
+
+import React from 'react';
+import {render} from 'react-dom';
+import App from './App';
+
+render(<App />, document.getElementById('app'));
+
+
+
+
+** 12-22, P-553
+
+npm install --save-dev style-loader css-loader
+
+
+//webpack.config.js, webpack.prod.config.js  변경 내용
+{
+  module: {
+    rules: [
+      ......
+      {
+        test: /\.css$/,
+        use: [
+          { loader: "style-loader" },
+          { loader: "css-loader" }
+        ]
+      }
+    ]
+  }
+}
+
+
+
+** 12-23, P-554
+
+//style.css 
+table.list  { width: 600px; border:1px solid black; border-collapse:collapse; }
+table.list td, table.list th { border:1px solid black;  text-align:center; }
+table.list > thead > tr { color:yellow; background-color: purple; }
+
+
+//index.js
+import React from 'react';
+import {render} from 'react-dom';
+import './style.css';
+import App from './App';
+
+render(<App />, document.getElementById('app'));
+
+
+//App.js
+ render() {
+        ......
+        return (
+            <div>
+                <h1>{data.title}</h1><hr/>
+                <table className={'list'}>
+                   ......
+                </table>
+            </div>
+        );
+    }
+
+
+
+** 12-24, P-555
+
+module.exports = { 
+    ......
+    module: {
+        rules: [
+            ......
+            {
+                test: /\.css$/,
+                exclude : /\.module\.css$/,
+                use: [
+                  { loader: "style-loader" },
+                  { loader: "css-loader" }
+                ]
+            },
+            {
+                test: /\.module\.css$/,
+                use: [
+                  { loader: "style-loader" },
+                  { loader: "css-loader", options : { modules: true } }
+                ]
+            }          
+        ]
+    },
+    ......
+ };
+
+
+
+** 12-25, P-556
+
+import React, { Component } from 'react';
+import data from './data.json';
+import style from './style.module.css';
+
+class App extends Component {
+    render() {
+        ......
+        return (
+            <div>
+                <h1>{data.title}</h1><hr/>
+                <table className={style.list}>
+                   ......
+                </table>
+            </div>
+        );
+    }
+}
+export default App;
+
+
+
+** 12-28, P-560
+
+npm install --save-dev html-webpack-plugin
+
+
+
+var HtmlWebpackPlugin = require('html-webpack-plugin');
+module.exports = {
+    ......
+    plugins : [
+       new HtmlWebpackPlugin({
+           title : '직원 정보 조회', 
+           template : __dirname + '/assets/index.html', 
+           filename : 'index.html'
+      }),    
+       ......
+   ],
+    ......
+};
+
+
+
+
+** 12-29, P-561
+.......
+module.exports = { 
+    ......
+    entry: { 
+        main: __dirname + '/src/main.js' 
+    }, 
+    output: { 
+        path: __dirname + '/public', 
+        filename: '[name]-[hash].js' 
+    },
+    ......
+ };
+ 
+
+
+
+** 12-30, P-562
+
+<!DOCTYPE html>
+<html>
+<head>
+   <meta charset="UTF-8">
+   <title><%=htmlWebpackPlugin.options.title %></title>
+</head>
+<body>
+   <div id="app"></div>
+</body>
+</html>
+
+
+
+** 12-31, P-563
+
+//package.json에 새로운 태스크 러너 추가
+{
+  ......
+  "scripts": {
+    "build": "cross-env  NODE_ENV=production  webpack --config webpack.prod.config.js",
+    "start": "cross-env  NODE_ENV=development  webpack-dev-server  --hot  --open"
+  },
+  ......
+}
+
+
+
+** 12-32, P-564
+
+var HtmlWebpackPlugin = require('html-webpack-plugin');
+var MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+module.exports = { 
+    ......
+    module: {
+        rules: [
+            ......
+            {
+                test: /\.css$/,
+                exclude : /\.module\.css$/,
+                use: [
+                    { loader: MiniCssExtractPlugin.loader  },
+                    { loader: "css-loader" }
+                ]
+            },
+            {
+                test: /\.module\.css$/,
+                use: [
+                    { loader: MiniCssExtractPlugin.loader },
+                    { loader: "css-loader", options : { modules: true } }
+                ]
+            }  
+        ]
+    },
+    plugins : [
+       .......
+       new MiniCssExtractPlugin({
+            filename: '[name]-[hash].css'
+       })
+    ]
+};
+
+
+
+** 12-34, P-566
+
+.mystyle { 
+   font-size:20pt; 
+   background-color:aqua; 
+   border:solid 1px gray;
+}
+
+
+
+......
+import style from './style.module.css'
+import './style2.css';
+
+class App extends Component {
+    render() {
+        ......
+        return (
+            <div>
+                ......
+                <div className="mystyle">contact : 010-222-3331</div>
+            </div>
+        );
+    }
+}
+
+export default App;
+
+
+
+
+** 12-35, P-567
+
+npm install --save-dev rimraf
+
+
+
+{
+  "name": "webpacktest",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "clean": "rimraf public",
+    "build": "npm run clean && webpack --config webpack.prod.config.js",
+    "start": "webpack-dev-server --hot --open"
+  },
+  ......
+}
+
+
+
+
+
+
+
+
+
+

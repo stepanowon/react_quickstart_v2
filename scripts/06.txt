@@ -1,0 +1,318 @@
+** 6-02, P-246
+
+import React, { useState } from "react";
+import ReactDOM from "react-dom";
+
+function App() {
+  const [msg, setMsg] = useState("React!!");
+
+  return (
+    <div>
+      <input type="text" value={msg} onChange={e => setMsg(e.target.value)} />
+      <span>Hello {msg}</span>
+    </div>
+  );
+}
+export default App;
+
+
+
+** 6-03, P-248
+
+import React, { useState, useEffect } from "react";
+
+function App() {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    console.log(`You clicked ${count} times`);
+  });
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>Click me</button>
+    </div>
+  );
+}
+
+
+
+** 6-04, P-249
+
+useEffect(() => {
+    console.log(`You clicked ${count} times`);
+}, [count]);
+
+
+useEffect(() => {
+   console.log(`You clicked ${count} times`);
+}, []);
+
+
+
+** 6-06, P-251
+
+const [currentTime, setCurrentTime] = useState(new Date());
+
+useEffect(() => {
+    console.log("### Clock component is mounted!!");
+    let handle = setInterval(() => {
+      setCurrentTime(new Date());
+      console.log("### Time is updated");
+    }, 1000);
+
+    return () => {
+      console.log("### Clock component will be unmounted!!");
+      clearInterval(handle);
+    };
+}, []);
+
+
+
+** 6-07, P-253
+
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+
+function App() {
+  const [name, setName] = useState("se");
+  const [contacts, setContacts] = useState([]);
+  useEffect(() => {
+    searchContacts();
+  }, []);
+
+  let searchContacts = () => {
+    const url = "https://contactsvc.herokuapp.com/contacts/search/" + name;
+    axios.get(url).then(response => {
+      setContacts(response.data);
+    });
+  };
+
+  let contactsElements = contacts.map(c => {
+    return (
+      <tr key={c.no}>
+        <td>{c.no}</td><td>{c.name}</td><td>{c.tel}</td><td>{c.address}</td>
+      </tr>
+    );
+  });
+
+  return (
+    <div>
+      <input type="text" value={name} onChange={e => setName(e.target.value)}
+         onKeyUp={e => {  e.keyCode === 13 ? searchContacts() : null;  }} />
+      <table className="list">
+        <thead>
+          <tr><th>번호</th><th>이름</th><th>모바일</th><th>이메일</th></tr>
+        </thead>
+        <tbody>{contactsElements}</tbody>
+      </table>
+    </div>
+  );
+}
+export default App;
+
+
+
+** 6-09, P-256
+
+import React, { useReducer } from "react";
+
+const Constant = {
+  CHANGE_NAME: "changeName"
+};
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case Constant.CHANGE_NAME:
+      return { name: action.payload.name };
+    default:
+      return state;
+  }
+};
+
+const App = () => {
+  const [state, dispatch] = useReducer(reducer, { name: "" });
+
+  return (
+    <div>
+      <input type="text" value={state.name}
+        onChange={ (e) =>
+          dispatch({  type: Constant.CHANGE_NAME,
+                payload: { name: e.target.value } })
+        } />
+      <div>Hello {state.name}</div>
+    </div>
+  );
+};
+
+export default App;
+
+
+** 6-10, P-258
+
+import React, { useRef } from "react";
+
+const App = () => {
+  const elName = useRef(null);
+  const elTel = useRef(null);
+  const elAddress = useRef(null);
+
+  const goFirstInputElement = () => {
+    elName.current.focus();
+  };
+
+  return (
+    <div>
+      이름 : <input ref={elName} type="text" defaultValue="홍길동" /><br />
+      전화 : <input ref={elTel} type="text" defaultValue="010-2222-3333" /><br />
+      주소 : <input ref={elAddress} type="text" defaultValue="서울" /><br />
+      <br />
+      <button onClick={goFirstInputElement}>첫번째 필드로 포커스 이동</button>
+    </div>
+  );
+};
+
+export default App;
+
+
+
+** 6-11, P-260
+
+import React, { useState, useMemo } from "react";
+
+const getTodoListCount = todoList => {
+  console.log("TodoList 카운트 : ", todoList.length);
+  return todoList.length;
+};
+
+const App = () => {
+  const [todoList, setTodoList] = useState([]);
+  const [todo, setTodo] = useState("");
+  ......
+
+  return (
+    <div>
+      <input type="text" value={todo} 
+          onChange={e => setTodo(e.target.value)} />
+      <button onClick={() => addTodo(todo)}>
+           Add Todo</button>
+      <br />
+      <ul>
+        {todoList.map(item => (
+          <li key={item.id}>
+            {item.todo}&nbsp;&nbsp;
+            <button onClick={() => deleteTodo(item.id)}>
+                삭제</button>
+          </li>
+        ))}
+      </ul>
+      <div>todo 갯수 : { getTodoListCount(todolist) }</div>
+    </div>
+  );
+};
+
+export default App;
+
+
+
+** 6-12, P-261
+import React, { useState, useMemo } from "react";
+
+const getTodoListCount = todoList => {
+  console.log("TodoList 카운트 : ", todoList.length);
+  return todoList.length;
+};
+
+const App = () => {
+  ......
+  const todolistCount = 
+     useMemo(() => getTodoListCount(todoList), [todoList]);
+
+  return (
+    <div>
+       ......(생략)
+       <div>todo 갯수 : {todolistCount}</div>
+    </div>
+  );
+};
+
+export default App;
+
+
+
+** 6-13, P-263
+
+import React, { useState, useMemo } from "react";
+
+const App = () => {
+  const [todoList, setTodoList] = useState([]);
+  const [todo, setTodo] = useState("");
+
+  const addTodo = todo => {
+    let newTodoList = [...todoList, { id: new Date().getTime(), todo: todo }];
+    setTodoList(newTodoList);
+  };
+
+  const deleteTodo = id => {
+    let index = todoList.findIndex(item => item.id === id);
+    let newTodoList = [...todoList];
+    newTodoList.splice(index, 1);
+    setTodoList(newTodoList);
+  };
+
+  ......(생략)
+}
+
+
+
+** 6-14, P-264
+
+import React, { useState, useMemo, useCallback } from "react";
+......
+const App = () => {
+  const [todoList, setTodoList] = useState([]);
+  const [todo, setTodo] = useState("");
+
+  const addTodo = useCallback( (todo) => {
+      let newTodoList = [...todoList, { id: new Date().getTime(), todo: todo }];
+      setTodoList(newTodoList);
+      setTodo("");
+  },[todoList] );
+
+  const deleteTodo = useCallback( (id) => {
+      let index = todoList.findIndex(item => item.id === id);
+      let newTodoList = [...todoList];
+      newTodoList.splice(index, 1);
+      setTodoList(newTodoList);
+  }, [todoList] );
+  ......
+};
+
+export default App;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

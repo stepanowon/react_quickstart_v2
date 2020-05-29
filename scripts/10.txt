@@ -1,0 +1,988 @@
+** 10-18, P-441
+
+export default {
+    ADD_TODO : "addTodo",
+    DELETE_TODO : "deleteTodo",
+    TOGGLE_DONE : "toggleDone",
+    UPDATE_TODO : "updateTodo",
+}
+
+
+import Constant from '../Constant';
+import produce from 'immer';
+
+const initialState = {
+    todolist : [
+        { id:1, todo:"ES6학습", desc:"설명1", done:false },
+        { id:2, todo:"React학습", desc:"설명2", done:false },
+        { id:3, todo:"ContextAPI 학습", desc:"설명3", done:true },
+        { id:4, todo:"야구경기 관람", desc:"설명4", done:false },
+    ]
+}
+
+const TodoReducer = (state=initialState, action) => {
+    let index;
+    switch(action.type) {
+        case Constant.ADD_TODO :
+            return produce(state, (draft)=> {
+                draft.todolist.push({ id:new Date().getTime(), 
+                    todo:action.payload.todo, desc: action.payload.desc, done:false});
+            })
+        case Constant.DELETE_TODO : 
+            index = state.todolist.findIndex((item)=>item.id === action.payload.id);
+            return produce(state, (draft)=> {
+                draft.todolist.splice(index,1);
+            })
+        case Constant.TOGGLE_DONE : 
+            index = state.todolist.findIndex((item)=>item.id === action.payload.id);
+            return produce(state, (draft)=> {
+                draft.todolist[index].done = !draft.todolist[index].done;
+            })
+        case Constant.UPDATE_TODO : 
+            index = state.todolist.findIndex((item)=>item.id === action.payload.id);
+            return produce(state, (draft)=> {
+                draft.todolist[index] = { ...action.payload };
+            })
+        default : 
+            return state;
+    }
+}
+
+export default TodoReducer;
+
+
+
+
+** 10-20, P-443
+
+import { createStore } from 'redux';
+import TodoReducer from './TodoReducer';
+
+const AppStore = createStore(TodoReducer);
+export default AppStore;
+
+
+
+import Constant from '../Constant';
+
+const TodoActionCreator = {
+    addTodo(todo, desc) {
+        return { type: Constant.ADD_TODO, payload: { todo, desc } }
+    },
+    deleteTodo(id) {
+        return { type: Constant.DELETE_TODO, payload: { id } }
+    },
+    toggleDone(id) {
+        return { type: Constant.TOGGLE_DONE, payload : { id } }
+    },
+    updateTodo(id, todo, desc, done) {
+        return { type: Constant.UPDATE_TODO, payload : { id, todo, desc, done } }
+    },
+}
+export default TodoActionCreator;
+
+
+
+
+** 10-21, P-444
+
+......
+import TodoActionCreator from '../redux/TodoActionCreator';
+import { connect } from 'react-redux';
+const TodoList = (props) => {
+  ......
+};
+TodoList.propTypes = { ......(생략) };
+
+const mapStateToProps = (state)=> {
+    return {
+        states : {
+            todolist : state.todolist
+        }
+    }
+}
+const mapDispatchToProps = (dispatch)=> {
+    return {
+        callbacks : {
+            deleteTodo : (id) => dispatch(TodoActionCreator.deleteTodo(id)),
+            toggleDone : (id) => dispatch(TodoActionCreator.toggleDone(id))
+        }
+    }
+}
+const TodoListContainer = connect(mapStateToProps, mapDispatchToProps)(TodoList);
+export default TodoListContainer;
+
+
+
+
+** 10-22, P-445
+
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+
+import TodoActionCreator from '../redux/TodoActionCreator';
+import { connect } from 'react-redux';
+
+
+const AddTodo = props => {
+  ......
+};
+
+AddTodo.propTypes = { ......(생략) };
+
+const mapDispatchToProps = (dispatch)=> {
+    return {
+        callbacks : {
+            addTodo : (todo, desc) => dispatch(TodoActionCreator.addTodo(todo, desc)),
+        }
+    }
+}
+
+const AddTodoContainer = connect(null, mapDispatchToProps)(AddTodo);
+export default AddTodoContainer;
+
+
+
+
+** 10-23, P-446
+
+......
+import TodoActionCreator from '../redux/TodoActionCreator';
+import { connect } from 'react-redux';
+
+const EditTodo = props => {
+    const history = useHistory();
+    //const todoitem = props.callbacks.getTodoOne(props.match.params.id);
+    const todoitem = props.todolist.find((item)=>item.id === parseInt(props.match.params.id,10));
+    if (!todoitem) {
+        history.push('/todos');
+    }
+    const [ todoOne, setTodoOne ] = useState({ ...todoitem });
+    const updateContactHandler = ()=> {
+        if (todoOne.todo.trim() === "" || todoOne.desc.trim()==="") {
+            alert('반드시 할일, 설명을 입력해야 합니다.');
+            return;
+        }
+        let { id, todo, desc, done } = todoOne;
+        props.callbacks.updateTodo(id, todo, desc, done);
+        history.push('/todos');
+    }
+    return (
+       ......(생략)
+    );
+};
+
+EditTodo.propTypes = {
+    todolist : PropTypes.arrayOf(PropTypes.object).isRequired,
+    callbacks :PropTypes.object.isRequired,
+};
+
+const mapStateToProps = (state)=> {
+    return {
+        todolist : state.todolist
+    }
+}
+const mapDispatchToProps = (dispatch)=> {
+    return {
+        callbacks : {
+            updateTodo : (id, todo, desc, done) => 
+	dispatch(TodoActionCreator.updateTodo(id, todo, desc, done)),
+        }
+    }
+}
+
+const EditTodoContainer = connect(mapStateToProps, mapDispatchToProps)(EditTodo);
+export default EditTodoContainer;
+
+
+
+** 10-25, P-448
+
+import React from 'react';
+import ReactDOM from 'react-dom';
+import 'bootstrap/dist/css/bootstrap.css';
+import './index.css';
+import App from './App';
+import * as serviceWorker from './serviceWorker';
+
+import AppStore from './redux/AppStore';
+import { Provider } from 'react-redux';
+
+ReactDOM.render(
+  <React.StrictMode>
+    <Provider store={AppStore}>
+      <App />
+    </Provider>
+  </React.StrictMode>,
+  document.getElementById('root')
+);
+serviceWorker.unregister();
+
+
+
+
+** 10-28, P-452
+
+export default {
+    ......  
+    CHANGE_TIME : "changeTime",
+}
+
+
+
+
+import Constant from '../Constant';
+
+const initialState = {
+    currentTime : new Date()
+}
+const TimeReducer = (state=initialState, action) => {
+    switch(action.type) {
+        case Constant.CHANGE_TIME:
+            return { ...state, currentTime : action.payload.currentTime }
+        default:
+            return state;
+    }
+}
+
+export default TimeReducer;
+
+
+
+** 10-29, P-453
+
+import { combineReducers } from 'redux';
+import TimeReducer from './TimeReducer';
+import TodoReducer from './TodoReducer';
+
+const RootReducer = combineReducers({ home : TimeReducer, todos: TodoReducer });
+export default RootReducer;
+
+
+
+
+import Constant from '../Constant';
+const TimeActionCreator = {
+    changeTime() {
+        return {  type: Constant.CHANGE_TIME, payload : { currentTime: new Date() } }
+    }
+}
+
+export default TimeActionCreator;
+
+
+
+
+** 10-30, P-454
+
+import { createStore } from 'redux';
+import RootReducer from './RootReducer';
+
+const AppStore = createStore(RootReducer);
+export default AppStore;
+
+
+
+
+......
+const mapStateToProps = (state)=> {
+    return {
+        todolist : state.todos.todolist
+    }
+}
+......
+
+
+
+
+** 10-31, P-455
+
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
+class MyTime extends Component {
+    render() {
+        return (
+            <div className="row">
+                <div className="col">
+                    <button className="btn btn-primary" onClick={()=>this.props.changeTime() }>
+                        현재 시간 확인</button>
+                    <h4><span className="label label-default">
+                        { this.props.currentTime.toLocaleString() }
+                    </span></h4>
+                </div>
+            </div>
+        );
+    }
+}
+
+MyTime.propTypes = {
+    currentTime: PropTypes.object.isRequired,
+    changeTime: PropTypes.func.isRequired
+};
+
+export default MyTime;
+
+
+
+
+** 10-32, P-456
+
+import React from 'react';
+import MyTime from './MyTime';
+import PropTypes from 'prop-types';
+import TimeActionCreator from '../redux/TimeActionCreator';
+import { connect } from 'react-redux';
+
+const Home = (props) => {
+    return (
+        <div className="card card-body">
+            <h2>Home</h2>
+            <MyTime currentTime={props.currentTime} changeTime={props.changeTime} />
+        </div>
+    );
+};
+
+Home.propTypes = {
+    currentTime: PropTypes.object.isRequired,
+    changeTime: PropTypes.func.isRequired
+};
+
+const mapStateToProps = (state)=> {
+    return {
+        currentTime : state.home.currentTime
+    }
+}
+const mapDispatchToProps = (dispatch)=> {
+    return {
+        changeTime : () => dispatch(TimeActionCreator.changeTime()),
+    }
+}
+
+const HomeContainer = connect(mapStateToProps, mapDispatchToProps)(Home);
+export default HomeContainer;
+
+
+
+
+
+** 10-37, P-462
+
+import { createStore, applyMiddleware } from 'redux';
+import RootReducer from './RootReducer';
+
+const logger = (store) => (next) => (action) => {
+    console.log("### action 실행 : ", action);
+    console.log("### action 변경전 상태 : ", store.getState());
+    next(action);
+    console.log("### action 변경후 상태 : ", store.getState());
+}
+
+const AppStore = createStore(RootReducer, applyMiddleware(logger));
+export default AppStore;
+
+
+
+** 10-39, P-465
+
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+import rootReducer from './reducer/rootReducer';
+ 
+const store = createStore(rootReducer, applyMiddleware(thunk) );
+
+export default store;
+
+
+
+** 10-40, P-466
+
+import Constant from '../Constant';
+
+const TimeActionCreator = {
+    changeTime() {
+        return {  type: Constant.CHANGE_TIME, payload : { currentTime: new Date() } }
+    },
+    asyncChangeTime() {
+        //의도적 지연시간 1초
+        return (dispatch, getState)=> {
+            //Logger 미들웨어로 확인하기 위해 존재하지 않는 액션 타입 전송
+            dispatch({ type:"changeTimeStart" })
+            setTimeout(()=>{
+                dispatch(this.changeTime());
+            }, 1000)
+        }    
+    }
+}
+
+export default TimeActionCreator;
+
+
+
+** 10-41, P-467
+
+......
+const mapDispatchToProps = (dispatch)=> {
+    return {
+        changeTime : () => dispatch(TimeActionCreator.asyncChangeTime()),
+    }
+}
+......
+
+
+
+import { createStore, applyMiddleware } from 'redux';
+import RootReducer from './RootReducer';
+import thunk from 'redux-thunk';
+
+const logger = (store) => (next) => (action) => {
+    console.log("### action 실행 : ", action);
+    console.log("### action 변경전 상태 : ", store.getState());
+    next(action);
+    console.log("### action 변경후 상태 : ", store.getState());
+}
+
+const AppStore = createStore(RootReducer, applyMiddleware(logger, thunk));
+export default AppStore;
+
+
+
+
+** 10-45, P-472
+
+yarn add -D  redux-immutable-state-invariant  redux-devtools-extension
+npm install --save-dev redux-immutable-state-invariant  redux-devtools-extension
+
+
+
+import { createStore, applyMiddleware } from 'redux';
+import RootReducer from './RootReducer';
+import thunk from 'redux-thunk';import TimeActionCreator from './TimeActionCreator';
+import TodoActionCreator from './TodoActionCreator';
+import { composeWithDevTools } from 'redux-devtools-extension';
+import invariant from 'redux-immutable-state-invariant';
+
+let AppStore;
+if (process.env.NODE_ENV === "development") {
+    const composeEnhancers = composeWithDevTools({ ...TimeActionCreator, ...TodoActionCreator });
+    AppStore = createStore(RootReducer, composeEnhancers(
+        applyMiddleware(invariant(), thunk)
+    ));
+} else {
+    AppStore = createStore(RootReducer, applyMiddleware(thunk));
+}
+
+export default AppStore;
+
+
+
+
+** 10-50, P-478
+
+......
+import TodoActionCreator from '../redux/TodoActionCreator';
+import { connect } from 'react-redux';
+......
+const mapStateToProps = (state)=> {
+    return {
+        states : {
+            todolist : state.todos.todolist
+        }
+    }
+}
+const mapDispatchToProps = (dispatch)=> {
+    return {
+        callbacks : {
+            deleteTodo : (id) => dispatch(TodoActionCreator.deleteTodo(id)),
+            toggleDone : (id) => dispatch(TodoActionCreator.toggleDone(id))
+        }
+    }
+}
+const TodoListContainer = connect(mapStateToProps, mapDispatchToProps)(TodoList);
+export default TodoListContainer;
+
+
+
+
+** 10-52, P-480
+
+......
+import TodoActionCreator from '../redux/TodoActionCreator';
+import { useDispatch, useSelector } from 'react-redux';
+......
+const TodoListContainer = () => {
+    const dispatch = useDispatch()
+
+    var propsObject = {
+        states : {
+            todolist : useSelector(state => state.todos.todolist),
+        },
+        callbacks : {
+            deleteTodo : (id) => dispatch(TodoActionCreator.deleteTodo(id)),
+            toggleDone : (id) => dispatch(TodoActionCreator.toggleDone(id))
+        }
+    }
+    return (
+        <TodoList {...propsObject} />
+    );
+};
+export default TodoListContainer;
+
+
+
+
+** 10-53, P-482
+
+yarn add -D redux-devtools-extension redux-immutable-state-invariant
+yarn add redux react-redux redux-thunk
+
+
+
+
+** 10-55, P-484
+
+export default {
+    FETCH_TODOLIST_REQUEST : "fetchTodoList_request",
+    FETCH_TODOLIST_SUCCESS : "fetchTodoList_success",
+    FETCH_TODOLIST_FAIL : "fetchTodoList_fail",
+
+    ADD_TODO_REQUEST : "addTodo_request",
+    ADD_TODO_SUCCESS : "addTodo_success",
+    ADD_TODO_FAIL : "addTodo_fail",
+
+    DELETE_TODO_REQUEST : "deleteTodo_request",
+    DELETE_TODO_SUCCESS : "deleteTodo_success",
+    DELETE_TODO_FAIL : "deleteTodo_fail",
+
+    TOGGLE_DONE_REQUEST : "toggleDone_request",
+    TOGGLE_DONE_SUCCESS : "toggleDone_success",
+    TOGGLE_DONE_FAIL : "toggleDone_fail",
+
+    UPDATE_TODO_REQUEST : "updateTodo_request",
+    UPDATE_TODO_SUCCESS : "updateTodo_success",
+    UPDATE_TODO_FAIL : "updateTodo_fail",
+}
+
+
+
+
+** 10-56, P-485
+
+import Constant from '../Constant';
+import produce from 'immer';
+
+const initialState = {
+    todolist : [],
+    isloading : false
+}
+
+const TodoReducer = (state=initialState, action) => {
+    switch(action.type) {
+        case Constant.ADD_TODO_REQUEST :
+        case Constant.DELETE_TODO_REQUEST : 
+        case Constant.TOGGLE_DONE_REQUEST : 
+        case Constant.UPDATE_TODO_REQUEST : 
+            return { ...state, isloading : true };
+        case Constant.FETCH_TODOLIST_REQUEST : 
+            return { ...state, isloading : true, todolist: [] };
+
+        case Constant.FETCH_TODOLIST_FAIL :
+        case Constant.ADD_TODO_FAIL :
+        case Constant.DELETE_TODO_FAIL : 
+        case Constant.TOGGLE_DONE_FAIL :
+        case Constant.UPDATE_TODO_FAIL :
+            return { ...state, isloading: false };
+        case Constant.FETCH_TODOLIST_SUCCESS :
+            return { ...state, isloading:false, todolist: action.payload.todolist };
+        case Constant.ADD_TODO_SUCCESS :
+            return produce(state, draft=>{
+                draft.todolist.push(action.payload.todoitem);
+                draft.isloading = false;
+            })
+        case Constant.DELETE_TODO_SUCCESS : 
+            return produce(state, draft=>{
+                let index = draft.todolist.findIndex((todo)=>todo.id === parseInt(action.payload.id,10))
+                draft.todolist.splice(index);
+                draft.isloading = false;
+            })
+        case Constant.TOGGLE_DONE_SUCCESS : 
+            return produce(state, draft=>{
+                let index = draft.todolist.findIndex((todo)=>todo.id === parseInt(action.payload.id,10))
+                draft.todolist[index].done = !draft.todolist[index].done;
+                draft.isloading = false;
+            })
+        case Constant.UPDATE_TODO_SUCCESS :
+            return produce(state, draft=>{
+                let index = draft.todolist.findIndex((todo)=>todo.id === parseInt(action.payload.todoitem.id,10))
+                draft.todolist[index] = action.payload.todoitem;
+                draft.isloading = false;
+            })
+        default :
+            return state;
+    }
+}
+
+export default TodoReducer;
+
+
+
+
+** 10-58, P-487
+
+import Constant from '../Constant';
+import axios from 'axios';
+
+const USER = "gdhong";
+const BASEURI = "/api/todolist_long/" + USER;
+
+const TodoActionCreator = {
+    fetchTodoListRequest : ()=> ({ type : Constant.FETCH_TODOLIST_REQUEST }),
+    addTodoRequest : ()=> ({ type : Constant.ADD_TODO_REQUEST }),
+    toggleDoneRequest : ()=> ({ type : Constant.TOGGLE_DONE_REQUEST }),
+    updateTodoRequest : ()=> ({ type : Constant.UPDATE_TODO_REQUEST }),
+    deleteTodoRequest : ()=> ({ type : Constant.DELETE_TODO_REQUEST }),
+
+    fetchTodoListSuccess : (todolist)=> ({ type : Constant.FETCH_TODOLIST_SUCCESS, payload: { todolist } }),
+    addTodoSuccess : (todoitem)=>({ type : Constant.ADD_TODO_SUCCESS, payload: { todoitem } }),
+    deleteTodoSuccess : (id)=>({ type: Constant.DELETE_TODO_SUCCESS, payload: { id } }),
+    toggleDoneSuccess : (id)=>({ type: Constant.TOGGLE_DONE_SUCCESS, payload: { id } }),
+    updateTodoSuccess : (todoitem)=>({ type: Constant.UPDATE_TODO_SUCCESS, payload: { todoitem } }),
+
+    fetchTodoListFail : ()=> ({ type : Constant.FETCH_TODOLIST_FAIL }),
+    addTodoFail : ()=> ({ type : Constant.ADD_TODO_FAIL }),
+    deleteTodoFail : ()=> ({ type : Constant.DELETE_TODO_FAIL }),
+    toggleDoneFail : ()=> ({ type : Constant.TOGGLE_DONE_FAIL }),
+    updateTodoFail : ()=> ({ type : Constant.UPDATE_TODO_FAIL }),
+
+    asyncFetchTodoList : (failCallback)=> {
+        return (dispatch, getState)=> {
+            dispatch({ type: Constant.FETCH_TODOLIST_REQUEST });
+            axios.get(BASEURI)
+            .then((response)=> {
+                dispatch({ type:Constant.FETCH_TODOLIST_SUCCESS, payload : { todolist: response.data } });
+            })
+            .catch((error)=>{   
+                failCallback("할일 조회 실패 : " + error);      dispatch({ type:Constant.FETCH_TODOLIST_FAIL });
+            })
+        } 
+    },
+    asyncAddTodo : (todo, desc, successCallback, failCallback) => {
+        return (dispatch, getState)=> {
+            dispatch({ type: Constant.ADD_TODO_REQUEST });
+            axios.post(BASEURI, { todo, desc })
+            .then((response)=>{
+                if (response.data.status === "success") {
+                    dispatch({ type:Constant.ADD_TODO_SUCCESS, 
+                          payload : { todoitem: { ...response.data.item, done:false } } });
+                    successCallback();
+                } else {
+                    dispatch({ type:Constant.ADD_TODO_FAIL });
+                    failCallback("할일 추가 실패 : " + response.data.message);
+                }
+            })
+            .catch((error)=>{
+                dispatch({ type:Constant.ADD_TODO_FAIL });     failCallback("할일 추가 실패 : " + error);
+            })
+        }
+    },
+    asyncUpdateTodo : (id, todo, desc, done, successCallback, failCallback) => {
+        return (dispatch, getState)=> {
+            dispatch({ type: Constant.UPDATE_TODO_REQUEST });
+            axios.put(`${BASEURI}/${id}`, { todo, desc, done })
+            .then((response)=> {
+                if (response.data.status === "success") {
+                    dispatch({ type:Constant.UPDATE_TODO_SUCCESS, payload : { todoitem: response.data.item } });
+                    successCallback();
+                } else {
+                    dispatch({ type:Constant.UPDATE_TODO_FAIL });
+                    failCallback("할일 변경 실패 : " + response.data.message);
+                }
+            })
+            .catch((error)=>{
+                dispatch({ type:Constant.UPDATE_TODO_FAIL });
+                failCallback("할일 변경 실패 : " + error);
+            })
+        }
+    },
+    asyncToggleDone : (id, failCallback) => {
+        return (dispatch, getState)=> {
+            dispatch({ type: Constant.TOGGLE_DONE_REQUEST });
+            axios.put(`${BASEURI}/${id}/done`)
+            .then((response)=> {
+                if (response.data.status === "success") {
+                    dispatch({ type:Constant.TOGGLE_DONE_SUCCESS, payload : { id } });
+                } else {
+                    dispatch({ type:Constant.TOGGLE_DONE_FAIL });
+                    failCallback("할일 완료 변경 실패 : " + response.data.message);
+                }
+            })
+            .catch((error)=>{
+                dispatch({ type:Constant.TOGGLE_DONE_FAIL });
+                failCallback("할일 완료 변경 실패 : " + error);
+            })
+        }
+    },
+    asyncDeleteTodo : (id, failCallback)=> {
+        return (dispatch, getState)=> {
+            dispatch({ type: Constant.DELETE_TODO_REQUEST });
+            axios.delete(`${BASEURI}/${id}`)
+            .then((response)=> {
+                if (response.data.status === "success") {
+                    dispatch({ type:Constant.DELETE_TODO_SUCCESS, payload : { id } });
+                } else {
+                    dispatch({ type:Constant.DELETE_TODO_FAIL });
+                    failCallback("할일 삭제 실패 : " + response.data.message);
+                }
+            })
+            .catch((error)=>{
+                dispatch({ type:Constant.DELETE_TODO_FAIL });
+                failCallback("할일 삭제 실패 : " + error);
+            })
+        }
+    }
+}
+
+export default TodoActionCreator;
+
+
+
+
+** 10-60, P-489
+
+import { createStore, applyMiddleware } from 'redux';
+import TodoReducer from './TodoReducer';
+import thunk from 'redux-thunk';
+import TodoActionCreator from './TodoActionCreator';
+import { composeWithDevTools } from 'redux-devtools-extension';
+import invariant from 'redux-immutable-state-invariant';
+
+let AppStore;
+if (process.env.NODE_ENV === "development") {
+    const composeEnhancers = composeWithDevTools(TodoActionCreator);
+    AppStore = createStore(TodoReducer, composeEnhancers(
+        applyMiddleware(invariant(), thunk)
+    ));
+} else {
+    AppStore = createStore(TodoReducer, applyMiddleware(thunk));
+}
+
+export default AppStore;
+
+
+
+** 10-61, P-490
+
+import React, { useEffect } from 'react';
+......(생략)
+
+const App = (props) => {
+  useEffect(()=> {
+    props.callbacks.fetchTodoList();
+  }, [])
+
+  return (
+    <Router>
+      <div className="container">
+        <Header />
+        <Switch>
+          <Route exact path="/" component={Home} />
+          <Route path="/about" component={About} />
+          <Route exact path="/todos" component={TodoList} />
+          <Route path="/todos/add" component={AddTodo} />
+          <Route path="/todos/edit/:id" component={EditTodo} />
+          <Route component={NotFound} />
+        </Switch>
+      </div>
+      { props.states.isloading ? <Loading /> : "" }
+    </Router>
+  );
+};
+......(생략)
+
+export default App;
+
+
+
+** 10-62, P-491
+
+import React  from 'react';
+import App from './App';
+import { useSelector, useDispatch } from 'react-redux';
+import TodoActionCreator from './redux/TodoActionCreator';
+
+const AppContainer = ()=> {
+    const dispatch = useDispatch();
+    const failCallback = (message) => {
+      alert(message)
+    }
+    var propsObject = {
+        states : { isloading : useSelector(state => state.isloading)    },
+        callbacks : { fetchTodoList : () => dispatch(TodoActionCreator.asyncFetchTodoList(failCallback)) }
+    }
+  
+    return (
+        <App {...propsObject} />
+    );
+}
+  
+export default AppContainer;
+
+
+
+** 10-63, P-492
+
+......
+import { useHistory } from 'react-router-dom';import TodoActionCreator from '../redux/TodoActionCreator';
+import { useDispatch } from 'react-redux';
+
+const AddTodo = props => {
+    const history = useHistory();
+    ......
+    const addContactHandler = ()=> {
+        if (todo.trim() === "" || desc.trim()==="") {
+            alert('반드시 할일, 설명을 입력해야 합니다.');
+            return;
+        } 
+        props.callbacks.addTodo(todo, desc, ()=> {
+            history.push('/todos'); 
+        });
+    }
+
+    return (
+        ......(생략)
+        <button type="button" className="btn btn-primary m-1" onClick={()=>history.push('/todos')}>취 소</button>
+        ......(생략)
+    );
+};
+
+.......(생략)
+
+const AddTodoContainer = (props) => {
+    const dispatch = useDispatch()
+    const failCallback = (message)=> {
+        props.history.push('/todos');
+        alert(message);
+    }
+    var propsObject = {
+        callbacks : {
+            addTodo : (todo, desc, successCallback) => 
+                 dispatch(TodoActionCreator.asyncAddTodo(todo, desc, successCallback, failCallback)),
+        }
+    }
+
+    return (
+        <AddTodo {...propsObject} />
+    );
+};
+
+export default AddTodoContainer;
+
+
+
+
+** 10-65, P-494
+
+......
+import { useHistory, useParams } from 'react-router-dom';
+import TodoActionCreator from '../redux/TodoActionCreator';
+import { useDispatch, useSelector } from 'react-redux';
+
+const EditTodo = props => {
+    const history = useHistory();
+    const params = useParams();
+    const todoitem = props.todolist.find((item)=>item.id === parseInt(params.id,10));
+    if (!todoitem) {
+        history.push('/todos');
+    }
+    const [ todoOne, setTodoOne ] = useState({ ...todoitem });
+    const updateContactHandler = ()=> {
+        if (todoOne.todo.trim() === "" || todoOne.desc.trim()==="") {
+            alert('반드시 할일, 설명을 입력해야 합니다.');
+            return;
+        }
+        let { id, todo, desc, done } = todoOne;
+        props.callbacks.updateTodo(id, todo, desc, done, ()=> {
+            history.push('/todos');
+        });
+    }
+
+    return ( ......(생략)......    );
+};
+
+EditTodo.propTypes = {
+    todolist : PropTypes.arrayOf(PropTypes.object).isRequired,
+    callbacks :PropTypes.object.isRequired,
+};
+
+const EditTodoContainer = () => {
+    const dispatch = useDispatch()
+    const failCallback = (message)=> {
+        alert(message);
+    }
+    var propsObject = {
+        todolist : useSelector(state => state.todolist),
+        callbacks : {
+            updateTodo : (id, todo, desc, done, successCallback) => 
+                 dispatch(TodoActionCreator.asyncUpdateTodo(id, todo, desc, done, successCallback, failCallback)),
+        }
+    }
+    return (
+        <EditTodo {...propsObject} />
+    );
+};
+
+export default EditTodoContainer;
+
+
+
+
+
+** 10-67, P-496
+
+......
+import TodoActionCreator from '../redux/TodoActionCreator';
+import { useDispatch, useSelector } from 'react-redux';
+......(TodoLIst 컴포넌트 생략)
+
+const TodoListContainer = () => {
+    const dispatch = useDispatch()
+    const failCallback = (message)=> {
+        alert(message);
+    }
+    var propsObject = {
+        states : {    todolist : useSelector(state => state.todolist)  },
+        callbacks : {
+            fetchTodoList : (id) => dispatch(TodoActionCreator.asyncFetchTodoList(failCallback)),
+            deleteTodo : (id) => dispatch(TodoActionCreator.asyncDeleteTodo(id, failCallback)),
+            toggleDone : (id) => dispatch(TodoActionCreator.asyncToggleDone(id, failCallback))
+        }
+    }
+
+    return (
+        <TodoList {...propsObject} />
+    );
+};
+
+export default TodoListContainer;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

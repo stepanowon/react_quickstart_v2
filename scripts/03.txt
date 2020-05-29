@@ -1,0 +1,373 @@
+** 3-01, P-84
+import React, { Component } from 'react';
+
+class App extends Component {
+    render() {
+        return (
+            <div>
+                <h1>Hello World</h1>
+            </div>
+        );
+    }
+}
+export default App;
+
+
+** 3-02, P-85
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './index.css';
+import App from './App';
+
+ReactDOM.render(<App />, document.getElementById('root'));
+
+
+
+** 3-03, P-86
+ render() {
+        let msg = "World!!";
+        return (
+            <div>
+                <h1>Hello {msg}</h1>
+            </div>
+        );
+ }
+
+
+** 3-04, P-87
+import React, { Component } from 'react';
+
+class Hello extends Component {
+    
+    createString(x,y) {
+        return (
+            <div>{x} + {y} = {x+y}</div>
+        )
+    }
+
+    render() {
+        let msg = "World!!";
+        return (
+            <div>
+                <h1>Hello {msg}</h1><hr />
+                { this.createString(4,5) }
+            </div>
+        );
+    }
+}
+
+export default Hello;
+
+
+** 3-06, P-89
+let Hello = (props) => {
+        return(
+            <div className="container">
+               <h1>Hrllo {props.msg}</h1>
+            </div>
+        )
+}
+
+
+
+** 3-07, P-90
+let Title = (props) => {
+    return(
+        <div><h2>{props.title}</h2></div>
+    )
+}
+export default Title
+
+
+import Title from './Title';
+
+let App = () => {
+    let data = { title : '해야할 일 목록' };
+    return (        
+        <div>{ Title(data) }</div>
+    );
+}
+
+
+** 3-08, P-92
+hr.dash-style {
+   background-color: #fff;
+   border-top: 2px dashed gray;
+}
+
+
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './index.css';
+import App from './App';
+
+ReactDOM.render(<App />, document.getElementById('root'));
+
+
+
+** 3-09, P-93
+......
+import 'bootstrap/dist/css/bootstrap.css'
+import './index.css'
+......
+ReactDOM.render(<App />, document.getElementById('root'));
+
+
+......
+<div class="card card-body bg-light mb-3">{x} + {y} = {x+y}</div>
+......
+<div class="container">
+    <h1>Hello {msg}</h1>
+    <hr class="dash-style" />
+    { this.createString(4,5) }
+</div>
+......
+
+
+** 3-10, P-96
+const a = (
+    <div>
+        <h1 className="test">Hello</h1>
+        <div>React!!</div>
+    </div>
+)
+
+
+
+** 3-14, P-99
+//dangerouslySetInnerHTML 특성을 사용하여 HTML 을 그대로 렌더링하기.
+let msg = "<i>World</i>";
+let Hello = function(props) {
+    return (
+        <div>
+            Hello 
+            <span dangerouslySetInnerHTML={{ __html:msg }} />
+        </div>
+    );
+}
+
+
+** 3-15, P-100
+import React, { Component } from 'react';
+
+class CountryList extends Component {
+    render() {
+        let list = [ 
+            { no:1, country:'이집트', visited:false }, 
+            { no:2, country:'일본',  visited:true },
+            { no:3, country:'피지', visited:false }, 
+            { no:4, country:'콜롬비아', visited:false }  
+        ];
+
+        let countries = list.map((item, index) => {
+           return (
+                <li key={item.no} 
+                    className={item.visited ? 'list-group-item active' : 'list-group-item' }>
+                    {item.country}
+                </li>
+            )
+        })
+        return (
+            <ul className="list-group">{countries}</ul>
+        );
+    }
+}
+export default CountryList;
+
+
+
+** 3-16, P-101
+return (
+    <li key={item.no} 
+        className={item.visited ? 'list-group-item active' : 'list-group-item' }>
+        {item.country}
+    </li>
+)
+
+
+let countryClass = "";
+if (item.visited)   { 
+    countryClass = 'list-group-item active'; 
+} else { 
+    countryClass = 'list-group-item'; 
+}
+return (
+    <li key={item.no} className={countryClass}>
+        {item.country}
+    </li>
+)
+
+
+
+** 3-17, P-102
+......
+import CountryList from './ CountryList ';
+
+class App extends Component {
+
+    render() {
+        let msg = "World!!";
+        return (
+            <div className="container">
+                ......
+                < CountryList />
+            </div>
+        );
+    }
+}
+......
+
+
+
+** 3-20, P-106
+.......
+class App extends Component {
+    ......
+    render() {
+        let list = [
+            { no:1, country:'이집트', visited:false },
+            { no:2, country:'일본',  visited:true },
+            { no:3, country:'피지', visited:false },
+            { no:4, country:'콜롬비아', visited:false }
+        ];
+
+        let msg = "World!!";
+        return (
+            <div className="container">
+                <h1>Hello {msg}</h1>
+                <hr className="dash-style" />
+                { this.createString(4,5) }
+                <CountryList countries={list} />
+            </div>
+        );
+    }
+}
+......
+
+
+
+** 3-21, P-107
+
+......
+class CountryList extends Component {
+    render() {
+        const list = this.props.countries;
+        let countries = list.map((item, index) => {
+           return (
+                <li key={item.no} 
+                    className={item.visited ? 'list-group-item active' : 'list-group-item' }>
+                    {item.country}
+                </li>
+            )
+        })
+        return (
+            <ul className="list-group">{countries}</ul>
+        );
+    }
+}
+......
+
+
+
+** 3-24, P-110
+
+import React, { Component } from 'react';
+import CountryItem from './CountryItem'
+
+class CountryList extends Component {
+    render() {
+        let countries = this.props.countries.map((item, index) => {
+            return (
+                <CountryItem key={item.no} country={item}/>
+            )
+        })
+        
+        return (
+            <ul className="list-group">
+                {countries}
+            </ul>
+        );
+    }
+}
+
+export default CountryList;
+
+
+
+** 3-25, P-111
+
+import React, { Component } from 'react';
+
+class CountryItem extends Component {
+    render() {
+        let item = this.props.country;
+        return (
+            <li className={item.visited ? 'list-group-item active' : 'list-group-item' }>
+                    {item.country}
+            </li>
+        );
+    }
+}
+
+export default CountryItem;
+
+
+** 3-27, P-113
+render() {
+    return (
+        <li className={this.props.visited ? 'list-group-item active' : 'list-group-item' }>
+                {this.props.country}
+        </li>
+    );
+}
+
+
+let countries = this.props.countries.map((item, index) => {
+    return (
+        <CountryItem key={item.no} { ...item }/>
+    )
+})
+
+
+
+** 3-31, P-118
+import React, { Component } from 'react';
+import CountryList from './CountryList';
+
+class App extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            msg : "World!!",            
+            list : [
+                { no:1, country:'이집트', visited:false },
+                { no:2, country:'일본',  visited:true },
+                { no:3, country:'피지', visited:false },
+                { no:4, country:'콜롬비아', visited:false }
+            ]
+        }
+    }
+    
+    createString(x,y) {
+        return (
+            <div className="card card-body bg-light mb-3">
+                  {x} + {y} = {x+y}</div>
+        )
+    }
+
+    render() {
+        return (
+            <div className="container">
+                <h1>Hello {this.state.msg}</h1>
+                <hr className="dash-style" />
+                { this.createString(4,5) }
+                <CountryList countries={this.state.list} />
+            </div>
+        );
+    }
+}
+
+export default App;
+
+
+
