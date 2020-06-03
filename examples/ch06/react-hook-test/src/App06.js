@@ -33,10 +33,7 @@ function App() {
         type="text"
         value={name}
         onChange={e => setName(e.target.value)}
-        onKeyUp={e => {
-          e.keyCode === 13 ? searchContacts() : null;
-        }}
-      />
+        onKeyUp={e => { if (e.keyCode === 13) searchContacts() }} />
       <table className="list">
         <thead>
           <tr>
