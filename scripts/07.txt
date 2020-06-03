@@ -388,7 +388,8 @@ export default App;
 ** 7-33, P-309
 
 import React from 'react';
-const Members = (props) => {    const goHome = () => {
+const Members = (props) => {
+    const goHome = () => {
       if (window.confirm('정말로 홈으로 이동할까요?') === true) {
         props.history.push('/');
       }  
