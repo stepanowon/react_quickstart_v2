@@ -32,7 +32,7 @@ function App() {
     </div>
   );
 }
-
+export default App;
 
 
 ** 6-04, P-249
