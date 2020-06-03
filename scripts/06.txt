@@ -1,7 +1,6 @@
 ** 6-02, P-246
 
 import React, { useState } from "react";
-import ReactDOM from "react-dom";
 
 function App() {
   const [msg, setMsg] = useState("React!!");
