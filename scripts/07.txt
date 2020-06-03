@@ -1228,6 +1228,11 @@ const TodoList = (props) => {
     );
 };
 
+TodoList.propTypes = {
+    states : PropTypes.object.isRequired,
+    callbacks : PropTypes.object.isRequired,
+}
+
 export default TodoList;
 
 
