@@ -1210,7 +1210,9 @@ import TodoItem from './TodoItem';
 const TodoList = (props) => {
     let todoItems = props.states.todolist.map((item)=> {
         return <TodoItem key={item.id} todoitem={item} callbacks={props.callbacks} />
-    })    return (
+    })
+    
+    return (
         <>
         <div className="row">
             <div className="col p-3">
