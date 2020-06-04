@@ -603,7 +603,7 @@ const TodoReducer = (state=initialState, action) => {
         case Constant.DELETE_TODO_SUCCESS : 
             return produce(state, draft=>{
                 let index = draft.todolist.findIndex((todo)=>todo.id === parseInt(action.payload.id,10))
-                draft.todolist.splice(index);
+                draft.todolist.splice(index,1);
                 draft.isloading = false;
             })
         case Constant.TOGGLE_DONE_SUCCESS : 
@@ -833,7 +833,8 @@ export default AppContainer;
 ** 10-63, P-492
 
 ......
-import { useHistory } from 'react-router-dom';import TodoActionCreator from '../redux/TodoActionCreator';
+import { useHistory } from 'react-router-dom';
+import TodoActionCreator from '../redux/TodoActionCreator';
 import { useDispatch } from 'react-redux';
 
 const AddTodo = props => {
@@ -942,7 +943,8 @@ export default EditTodoContainer;
 
 ......
 import TodoActionCreator from '../redux/TodoActionCreator';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+
 ......(TodoLIst 컴포넌트 생략)
 
 const TodoListContainer = () => {
