@@ -31,8 +31,7 @@ const TodoActionCreator = {
                 dispatch({ type:Constant.FETCH_TODOLIST_SUCCESS, payload : { todolist: response.data } });
             })
             .catch((error)=>{   
-                failCallback("할일 조회 실패 : " + error);
-                dispatch({ type:Constant.FETCH_TODOLIST_FAIL });
+                failCallback("할일 조회 실패 : " + error);      dispatch({ type:Constant.FETCH_TODOLIST_FAIL });
             })
         } 
     },
@@ -42,7 +41,8 @@ const TodoActionCreator = {
             axios.post(BASEURI, { todo, desc })
             .then((response)=>{
                 if (response.data.status === "success") {
-                    dispatch({ type:Constant.ADD_TODO_SUCCESS, payload : { todoitem: { ...response.data.item, done:false } } });
+                    dispatch({ type:Constant.ADD_TODO_SUCCESS, 
+                          payload : { todoitem: { ...response.data.item, done:false } } });
                     successCallback();
                 } else {
                     dispatch({ type:Constant.ADD_TODO_FAIL });
@@ -50,8 +50,7 @@ const TodoActionCreator = {
                 }
             })
             .catch((error)=>{
-                dispatch({ type:Constant.ADD_TODO_FAIL });
-                failCallback("할일 추가 실패 : " + error);
+                dispatch({ type:Constant.ADD_TODO_FAIL });     failCallback("할일 추가 실패 : " + error);
             })
         }
     },

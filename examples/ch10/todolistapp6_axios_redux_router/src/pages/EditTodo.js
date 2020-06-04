@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
 import PropTypes from 'prop-types';
-
+import { useHistory, useParams } from 'react-router-dom';
 import TodoActionCreator from '../redux/TodoActionCreator';
 import { useDispatch, useSelector } from 'react-redux';
-
 
 const EditTodo = props => {
     const history = useHistory();
@@ -13,9 +11,12 @@ const EditTodo = props => {
     if (!todoitem) {
         history.push('/todos');
     }
+
     const [ todoOne, setTodoOne ] = useState({ ...todoitem });
+    
     const updateContactHandler = ()=> {
-        if (todoOne.todo.trim() === "" || todoOne.desc.trim()==="") {
+        if (todoOne.todo.trim() === "" || 
+           todoOne.desc.trim()==="") {
             alert('반드시 할일, 설명을 입력해야 합니다.');
             return;
         }
@@ -34,25 +35,26 @@ const EditTodo = props => {
         </div>
         <div className="row">
             <div className="col">
-                <input type="hidden" className="form-control" id="id" 
-                        defaultValue={todoOne.id} disabled />
+                <input type="hidden" className="form-control" id="id" defaultValue={todoOne.id} disabled />
                 <div className="form-group">
                     <label htmlFor="todo">할일:</label>
-                    <input type="text" className="form-control" id="todo" 
-                        value={todoOne.todo} onChange={(e)=>setTodoOne({ ...todoOne, todo:e.target.value })} />
+                    <input type="text" className="form-control" id="todo" value={todoOne.todo} 
+                         onChange={(e)=>setTodoOne({ ...todoOne, todo:e.target.value })} />
                 </div>
                 <div className="form-group">
                     <label htmlFor="desc">설명:</label>
-                    <textarea className="form-control" rows="3" id="desc" 
-                        value={todoOne.desc} onChange={(e)=>setTodoOne({ ...todoOne, desc:e.target.value })}></textarea>  
+                    <textarea className="form-control" rows="3" id="desc" value={todoOne.desc} 
+                          onChange={(e)=>setTodoOne({ ...todoOne, desc:e.target.value })}></textarea>  
                 </div>
                 <div className="form-group">
                     <label htmlFor="done">완료여부 : </label>{' '}
-                    <input type="checkbox" checked={todoOne.done} onChange={(e)=>setTodoOne({ ...todoOne, done:e.target.checked })} />
+                    <input type="checkbox" checked={todoOne.done} 
+                          onChange={(e)=>setTodoOne({ ...todoOne, done:e.target.checked })} />
                 </div>
                 <div className="form-group">
                     <button type="button" className="btn btn-primary m-1" onClick={updateContactHandler}>수 정</button>
-                    <button type="button" className="btn btn-primary m-1" onClick={()=>history.push('/todos')}>취 소</button>
+                    <button type="button" className="btn btn-primary m-1" 
+                         onClick={()=>history.push('/todos')}>취 소</button>
                 </div>
             </div>
         </div>
@@ -61,7 +63,6 @@ const EditTodo = props => {
 };
 
 EditTodo.propTypes = {
-    todolist : PropTypes.arrayOf(PropTypes.object).isRequired,
     callbacks :PropTypes.object.isRequired,
 };
 
@@ -73,10 +74,10 @@ const EditTodoContainer = () => {
     var propsObject = {
         todolist : useSelector(state => state.todolist),
         callbacks : {
-            updateTodo : (id, todo, desc, done, successCallback) => dispatch(TodoActionCreator.asyncUpdateTodo(id, todo, desc, done, successCallback, failCallback)),
+            updateTodo : (id, todo, desc, done, successCallback) => 
+                 dispatch(TodoActionCreator.asyncUpdateTodo(id, todo, desc, done, successCallback, failCallback)),
         }
     }
-
     return (
         <EditTodo {...propsObject} />
     );

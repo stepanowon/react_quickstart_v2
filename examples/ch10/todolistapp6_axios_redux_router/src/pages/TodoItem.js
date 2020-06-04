@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 
 const TodoItem = (props) => {
     const history = useHistory();
-    
     let itemClassName = "list-group-item";
     if (props.todoitem.done) itemClassName +=" list-group-item-success";
     return (

@@ -1,6 +1,5 @@
 import React  from 'react';
 import App from './App';
-//import App from './App2';
 import { useSelector, useDispatch } from 'react-redux';
 import TodoActionCreator from './redux/TodoActionCreator';
 
@@ -17,6 +16,6 @@ const AppContainer = ()=> {
     return (
         <App {...propsObject} />
     );
-  }
+}
   
-  export default AppContainer;
+export default AppContainer;

@@ -7,25 +7,22 @@ import TodoActionCreator from '../redux/TodoActionCreator';
 import { useDispatch, useSelector } from 'react-redux';
 
 const TodoList = (props) => {
-
     let todoItems = props.states.todolist.map((item)=> {
-        return (
-            <TodoItem key={item.id} todoitem={item} callbacks={props.callbacks} />
-        )
+        return <TodoItem key={item.id} todoitem={item} callbacks={props.callbacks} />
     })
+    
     return (
         <>
         <div className="row">
             <div className="col p-3">
-                <Link className="btn btn-primary mr-1" to="/todos/add">연락처 추가</Link>
-                <button className="btn btn-primary mr-1" onClick={ ()=>props.callbacks.fetchTodoList() }>연락처 새로고침</button>
+                <Link className="btn btn-primary" to="/todos/add">연락처 추가</Link>
+                { " " } <button className="btn btn-primary mr-1" 
+                     onClick={ ()=>props.callbacks.fetchTodoList() }>연락처 새로고침</button>
             </div>
         </div>
         <div className="row">
             <div className="col">
-                <ul className="list-group">
-                    {todoItems}
-                </ul>
+                <ul className="list-group">{todoItems}</ul>
             </div>
         </div>
         </>
@@ -33,9 +30,9 @@ const TodoList = (props) => {
 };
 
 TodoList.propTypes = {
-    callbacks : PropTypes.object.isRequired,
     states : PropTypes.object.isRequired,
-};
+    callbacks : PropTypes.object.isRequired,
+}
 
 const TodoListContainer = () => {
     const dispatch = useDispatch()
@@ -43,9 +40,7 @@ const TodoListContainer = () => {
         alert(message);
     }
     var propsObject = {
-        states : {
-            todolist : useSelector(state => state.todolist),
-        },
+        states : {    todolist : useSelector(state => state.todolist)  },
         callbacks : {
             fetchTodoList : (id) => dispatch(TodoActionCreator.asyncFetchTodoList(failCallback)),
             deleteTodo : (id) => dispatch(TodoActionCreator.asyncDeleteTodo(id, failCallback)),

@@ -9,6 +9,7 @@ import TodoList from './pages/TodoList';
 import AddTodo from './pages/AddTodo';
 import EditTodo from './pages/EditTodo';
 import NotFound from './pages/NotFound';
+
 import Loading from './components/Loading';
 
 const App = (props) => {
@@ -40,4 +41,3 @@ App.propTypes = {
 };
 
 export default App;
-

@@ -1,7 +1,6 @@
 import { createStore, applyMiddleware } from 'redux';
 import TodoReducer from './TodoReducer';
-import thunk from 'redux-thunk';
-
+import thunk from 'redux-thunk';
 import TodoActionCreator from './TodoActionCreator';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import invariant from 'redux-immutable-state-invariant';
@@ -15,5 +14,5 @@ if (process.env.NODE_ENV === "development") {
 } else {
     AppStore = createStore(TodoReducer, applyMiddleware(thunk));
 }
-export default AppStore;
 
+export default AppStore;

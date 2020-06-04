@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { useHistory } from 'react-router-dom';
 
+import { useHistory } from 'react-router-dom';
 import TodoActionCreator from '../redux/TodoActionCreator';
 import { useDispatch } from 'react-redux';
 
 const AddTodo = props => {
     const history = useHistory();
+
     let [ todo, setTodo ] = useState('');
     let [ desc, setDesc ] = useState('');
     
@@ -19,7 +20,6 @@ const AddTodo = props => {
             history.push('/todos'); 
         });
     }
-
     return (
         <>
         <div className="row">
@@ -29,7 +29,7 @@ const AddTodo = props => {
         </div>
         <div className="row">
             <div className="col">
-                <div className="form-group">
+            <div className="form-group">
                     <label htmlFor="todo">할일 :</label>
                     <input type="text" className="form-control" id="todo" 
                         value={todo} onChange={(e)=>setTodo(e.target.value)} />
@@ -42,7 +42,8 @@ const AddTodo = props => {
                 <div className="form-group">
                     <button type="button" className="btn btn-primary m-1"
                         onClick={addContactHandler}>추 가</button>
-                    <button type="button" className="btn btn-primary m-1" onClick={()=>history.push('/todos')}>취 소</button>
+                    <button type="button" className="btn btn-primary m-1" 
+                        onClick={()=>history.push('/todos')}>취 소</button>
                 </div>
             </div>
         </div>
@@ -62,7 +63,8 @@ const AddTodoContainer = (props) => {
     }
     var propsObject = {
         callbacks : {
-            addTodo : (todo, desc, successCallback) => dispatch(TodoActionCreator.asyncAddTodo(todo, desc, successCallback, failCallback)),
+            addTodo : (todo, desc, successCallback) => 
+                 dispatch(TodoActionCreator.asyncAddTodo(todo, desc, successCallback, failCallback)),
         }
     }
 
