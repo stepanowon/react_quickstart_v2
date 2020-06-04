@@ -3,11 +3,12 @@ import PropTypes from 'prop-types';
 
 import TodoActionCreator from '../redux/TodoActionCreator';
 import { useDispatch } from 'react-redux';
-
+import { useHistory } from 'react-router-dom';
 
 const AddTodo = props => {
     let [ todo, setTodo ] = useState('');
     let [ desc, setDesc ] = useState('');
+    const history = useHistory();
     
     const addContactHandler = ()=> {
         if (todo.trim() === "" || desc.trim()==="") {
@@ -15,7 +16,7 @@ const AddTodo = props => {
             return;
         } 
         props.callbacks.addTodo(todo, desc);
-        props.history.push('/todos'); 
+        history.push('/todos'); 
     }
 
     return (

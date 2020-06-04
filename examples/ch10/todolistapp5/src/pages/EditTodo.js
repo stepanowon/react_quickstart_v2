@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import TodoActionCreator from '../redux/TodoActionCreator';
@@ -8,8 +8,9 @@ import { useDispatch, useSelector } from 'react-redux';
 
 const EditTodo = props => {
     const history = useHistory();
+    const match = useRouteMatch();
     //const todoitem = props.callbacks.getTodoOne(props.match.params.id);
-    const todoitem = props.todolist.find((item)=>item.id === parseInt(props.match.params.id,10));
+    const todoitem = props.todolist.find((item)=>item.id === parseInt(match.params.id,10));
     if (!todoitem) {
         history.push('/todos');
     }
