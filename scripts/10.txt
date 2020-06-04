@@ -457,7 +457,8 @@ npm install --save-dev redux-immutable-state-invariant  redux-devtools-extension
 
 import { createStore, applyMiddleware } from 'redux';
 import RootReducer from './RootReducer';
-import thunk from 'redux-thunk';import TimeActionCreator from './TimeActionCreator';
+import thunk from 'redux-thunk';
+import TimeActionCreator from './TimeActionCreator';
 import TodoActionCreator from './TodoActionCreator';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import invariant from 'redux-immutable-state-invariant';

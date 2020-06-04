@@ -1,7 +1,6 @@
 ** 6-02, P-246
 
 import React, { useState } from "react";
-import ReactDOM from "react-dom";
 
 function App() {
   const [msg, setMsg] = useState("React!!");
@@ -33,7 +32,7 @@ function App() {
     </div>
   );
 }
-
+export default App;
 
 
 ** 6-04, P-249
@@ -98,7 +97,7 @@ function App() {
   return (
     <div>
       <input type="text" value={name} onChange={e => setName(e.target.value)}
-         onKeyUp={e => {  e.keyCode === 13 ? searchContacts() : null;  }} />
+         onKeyUp={e => { if (e.keyCode === 13) searchContacts() }} />
       <table className="list">
         <thead>
           <tr><th>번호</th><th>이름</th><th>모바일</th><th>이메일</th></tr>
