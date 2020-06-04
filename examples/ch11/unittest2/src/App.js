@@ -2,8 +2,8 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-import Link from '../../unittest2/src/components/Link';
-import Clock from '../../unittest2/src/components/Clock';
+import Link from './components/Link';
+import Clock from './components/Clock';
 
 function App() {
   return (
