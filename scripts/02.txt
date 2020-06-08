@@ -14,7 +14,7 @@ console.log(`hello ${name}!!`);
 
 ** 2-14, P-44
 npm install babel-plugin-source-map-support --save-dev
-npx babel  src  –d  build  --source-maps
+npx babel  src  -d  build  --source-maps
 
 ** 2-15, P-45
 
