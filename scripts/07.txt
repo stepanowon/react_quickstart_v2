@@ -139,7 +139,7 @@ import React, { useState } from 'react';
 ......
 
 const App = () => {
-    const [members, setMember] = useState([
+    const [members] = useState([
         { name: 'Maggie Adams', photo: 'photos/Mag.png' },
         { name: 'Sammie Purcell', photo: 'photos/Sam.png' },
         { name: 'Tim Purcell', photo: 'photos/Tim.png' },
@@ -206,7 +206,7 @@ import SongDetail from './SongDetail';
 const App = () => {
     const [members] = useState([ ...... (생략) ...... ]);
     const [songs] = useState([
-        { id:1, title:"Fallin' for you", musician:'Colbie callet', youtubel_ink:'PABUl_EX_hw' },
+        { id:1, title:"Fallin' for you", musician:'Colbie callet', youtube_ink:'PABUl_EX_hw' },
         { id:2, title:"Can't hurry love", musician:'The supremes', youtube_link:'EJDPhjQft04' },
         { id:3, title:"Landslide", musician:'Dixie chicks', youtube_link:'V2N7gYom9-A' },
         { id:4, title:"Can't let go", musician:'Linda ronstadt', youtube_link:'P-EpGKXmoe4' },
