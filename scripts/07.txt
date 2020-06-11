@@ -1337,7 +1337,9 @@ import PropTypes from 'prop-types';
 const EditTodo = props => {
     const history = useHistory();
     const todoitem = props.callbacks.getTodoOne(props.match.params.id);
-    const [ todoOne, setTodoOne ] = useState({ ...todoitem });        const updateContactHandler = ()=> {
+    const [ todoOne, setTodoOne ] = useState({ ...todoitem });
+    
+    const updateContactHandler = ()=> {
         if (todoOne.todo.trim() === "" || todoOne.desc.trim()==="") {
             alert('반드시 할일, 설명을 입력해야 합니다.');
             return;
