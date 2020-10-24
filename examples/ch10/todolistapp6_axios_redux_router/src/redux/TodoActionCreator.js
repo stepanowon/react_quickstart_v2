@@ -25,86 +25,87 @@ const TodoActionCreator = {
 
     asyncFetchTodoList : (failCallback)=> {
         return (dispatch, getState)=> {
-            dispatch({ type: Constant.FETCH_TODOLIST_REQUEST });
+            dispatch(TodoActionCreator.fetchTodoListRequest());
             axios.get(BASEURI)
             .then((response)=> {
-                dispatch({ type:Constant.FETCH_TODOLIST_SUCCESS, payload : { todolist: response.data } });
+                dispatch(TodoActionCreator.fetchTodoListSuccess(response.data))
             })
             .catch((error)=>{   
-                failCallback("할일 조회 실패 : " + error);      dispatch({ type:Constant.FETCH_TODOLIST_FAIL });
+                failCallback("할일 조회 실패 : " + error);
+                dispatch(TodoActionCreator.fetchTodoListFail());      
             })
         } 
     },
     asyncAddTodo : (todo, desc, successCallback, failCallback) => {
         return (dispatch, getState)=> {
-            dispatch({ type: Constant.ADD_TODO_REQUEST });
+            dispatch(TodoActionCreator.addTodoRequest());
             axios.post(BASEURI, { todo, desc })
             .then((response)=>{
                 if (response.data.status === "success") {
-                    dispatch({ type:Constant.ADD_TODO_SUCCESS, 
-                          payload : { todoitem: { ...response.data.item, done:false } } });
+                    dispatch(TodoActionCreator.addTodoSuccess({ ...response.data.item, done:false }))
                     successCallback();
                 } else {
-                    dispatch({ type:Constant.ADD_TODO_FAIL });
+                    dispatch(TodoActionCreator.addTodoFail());
                     failCallback("할일 추가 실패 : " + response.data.message);
                 }
             })
             .catch((error)=>{
-                dispatch({ type:Constant.ADD_TODO_FAIL });     failCallback("할일 추가 실패 : " + error);
+                dispatch(TodoActionCreator.addTodoFail());     
+                failCallback("할일 추가 실패 : " + error);
             })
         }
     },
     asyncUpdateTodo : (id, todo, desc, done, successCallback, failCallback) => {
         return (dispatch, getState)=> {
-            dispatch({ type: Constant.UPDATE_TODO_REQUEST });
+            dispatch(TodoActionCreator.updateTodoRequest());
             axios.put(`${BASEURI}/${id}`, { todo, desc, done })
             .then((response)=> {
                 if (response.data.status === "success") {
-                    dispatch({ type:Constant.UPDATE_TODO_SUCCESS, payload : { todoitem: response.data.item } });
+                    dispatch(TodoActionCreator.updateTodoSuccess(response.data.item));
                     successCallback();
                 } else {
-                    dispatch({ type:Constant.UPDATE_TODO_FAIL });
+                    dispatch(TodoActionCreator.updateTodoFail());
                     failCallback("할일 변경 실패 : " + response.data.message);
                 }
             })
             .catch((error)=>{
-                dispatch({ type:Constant.UPDATE_TODO_FAIL });
+                dispatch(TodoActionCreator.updateTodoFail());
                 failCallback("할일 변경 실패 : " + error);
             })
         }
     },
     asyncToggleDone : (id, failCallback) => {
         return (dispatch, getState)=> {
-            dispatch({ type: Constant.TOGGLE_DONE_REQUEST });
+            dispatch(TodoActionCreator.toggleDoneRequest());
             axios.put(`${BASEURI}/${id}/done`)
             .then((response)=> {
                 if (response.data.status === "success") {
-                    dispatch({ type:Constant.TOGGLE_DONE_SUCCESS, payload : { id } });
+                    dispatch(TodoActionCreator.toggleDoneSuccess(id))
                 } else {
-                    dispatch({ type:Constant.TOGGLE_DONE_FAIL });
+                    dispatch(TodoActionCreator.toggleDoneFail());
                     failCallback("할일 완료 변경 실패 : " + response.data.message);
                 }
             })
             .catch((error)=>{
-                dispatch({ type:Constant.TOGGLE_DONE_FAIL });
+                dispatch(TodoActionCreator.toggleDoneFail());
                 failCallback("할일 완료 변경 실패 : " + error);
             })
         }
     },
     asyncDeleteTodo : (id, failCallback)=> {
         return (dispatch, getState)=> {
-            dispatch({ type: Constant.DELETE_TODO_REQUEST });
+            dispatch(TodoActionCreator.deleteTodoRequest());
             axios.delete(`${BASEURI}/${id}`)
             .then((response)=> {
                 if (response.data.status === "success") {
-                    dispatch({ type:Constant.DELETE_TODO_SUCCESS, payload : { id } });
+                    dispatch(TodoActionCreator.deleteTodoSuccess(id));
                 } else {
-                    dispatch({ type:Constant.DELETE_TODO_FAIL });
+                    dispatch(TodoActionCreator.deleteTodoFail());
                     failCallback("할일 삭제 실패 : " + response.data.message);
                 }
             })
             .catch((error)=>{
-                dispatch({ type:Constant.DELETE_TODO_FAIL });
+                dispatch(TodoActionCreator.deleteTodoFail());
                 failCallback("할일 삭제 실패 : " + error);
             })
         }
