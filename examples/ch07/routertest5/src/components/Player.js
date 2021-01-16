@@ -1,5 +1,5 @@
 import React from 'react';
-import YoutubeReact from 'youtube-player-react'
+import Youtube from 'react-youtube'
 
 const Player = (props) => {
     const id = props.match.params.id;
@@ -7,8 +7,7 @@ const Player = (props) => {
 
     return (
         <div className="mt-5">
-            <YoutubeReact videoid={song.youtube_link} 
-                listType="search" autoplay={1} origin="http://localhost:3000" />
+            <Youtube videoId={song.youtube_link} opts={{ width:320, height:240, playerVars: { autoplay:1 }}}/>
         </div>
     );
 };
